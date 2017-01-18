@@ -25,17 +25,39 @@ class Package:
         _vehicle = None
 
     def getId(self):
+        """
+        Get the unique id of this package.
+        :rtype: int
+        """
         return self._id
 
     def getSrc(self):
+        """
+        Get the source location of this package.
+        :rtype: int
+        """
         return self._src
 
     def getDest(self):
+        """
+        Get the destination location of this package.
+        :rtype: int
+        """
         return self._dest
 
     def isHeld(self):
-        return True is self._vehicle is None else False
+        """
+        Return True if this package is currently held by a vehicle,
+        and False otherwise.
+        :rtype: bool
+        """
+        return True if self._vehicle is None else False
 
     def getVehicle(self):
+        """
+        Return the id of the vehicle holding this package, 
+        or None if the package is not held.
+        :rtype: int, None
+        """
         return self._vehicle
         
