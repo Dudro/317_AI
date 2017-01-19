@@ -25,3 +25,5 @@ if __name__ == "__main__":
         dest = random.randrange(0, M)
         packages.append(Package(i, src, dest))
 
+    
+    
