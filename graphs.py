@@ -46,7 +46,49 @@ def get_og_graph():
     d2 = 1
     s3 = 4
     d3 = 5
-    pairs = [(6, 2), (3, 1), (4, 5)]
+    pairs = [(s1, d1), (s2, d2), (s3, d3)]
 
     return ogg, pairs
 
+def get_circle_graph():
+    size = 10
+    circle = nx.Graph()
+
+    for i in range(size):
+        circle.add_node(i)
+    circle.add_edge(0,1,weight=5)
+    circle.add_edge(1,2,weight=5)
+    circle.add_edge(2,3,weight=5)
+    circle.add_edge(3,4,weight=5)
+    circle.add_edge(4,5,weight=5)
+    circle.add_edge(5,6,weight=5)
+    circle.add_edge(6,7,weight=5)
+    circle.add_edge(7,8,weight=5)
+    circle.add_edge(8,9,weight=5)
+    circle.add_edge(9,0,weight=5)
+
+    s1 = 0
+    d1 = 1
+    s2 = 1
+    d2 = 2
+    s3 = 2
+    d3 = 3
+    s4 = 3
+    d4 = 4
+    s5 = 4
+    d5 = 5
+    s6 = 5
+    d6 = 6  
+    s7 = 6
+    d7 = 7
+    s8 = 7
+    d8 = 8
+    s9 = 8
+    d9 = 9
+    s10 = 9
+    d10 = 0
+
+    pairs = [(s1, d1), (s2, d2), (s3, d3), (s4, d4), (s5, d5), \
+             (s6, d6), (s7, d7), (s8, d8), (s9, d9), (s10, d10)]
+   
+    return circle, pairs
