@@ -9,16 +9,14 @@ def show_graph(graph, pairs):
     draw_graph(graph, pairs)
     plt.show()
 
-show_graph(*get_triangle_graph())
-show_graph(*get_ogg_graph())
-show_graph(*get_circle_graph())
-
 def test_graphs():
     G, pairs = graphs.get_triangle_graph()
     N = 1
     K = len(pairs)
     M = nx.number_of_nodes(G)
 
+    show_graph(G, pairs)
+    
     world = World.World(N, K, M, G, pairs)
     print("Original graph:")
     print(nx.to_dict_of_dicts(G))
@@ -40,10 +38,14 @@ def test_graphs():
     print("Reduced graph:")
     print(nx.to_dict_of_dicts(world._reduced_graph))
 
+    show_graph(world._reduced_graph, pairs)
+
     G, pairs = graphs.get_ogg_graph()
     N = 3
     K = len(pairs)
     M = nx.number_of_nodes(G)
+
+    show_graph(G, pairs)
 
     world = World.World(N, K, M, G, pairs)
     print("Original graph:")
@@ -66,11 +68,15 @@ def test_graphs():
     print("Reduced graph:")
     print(nx.to_dict_of_dicts(world._reduced_graph))
     
+    show_graph(world._reduced_graph, pairs)
+
     G, pairs = graphs.get_circle_graph()
     graphs.draw_graph(G, pairs)
     N = 2
     K = len(pairs)
     M = nx.number_of_nodes(G)
+
+    show_graph(G, pairs)
 
     world = World.World(N, K, M, G, pairs)
     print("Original graph:") 
@@ -98,4 +104,6 @@ def test_graphs():
         print("error")
     print("Reduced graph:")
     print(nx.to_dict_of_dicts(world._reduced_graph)) 
+
+    show_graph(world._reduced_graph, pairs)
 
