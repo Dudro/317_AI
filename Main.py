@@ -57,6 +57,7 @@ if __name__ == "__main__":
     print(nx.to_dict_of_dicts(world._reduced_graph))
     
     G, pairs = graphs.get_circle_graph()
+    graphs.draw_graph(G, pairs)
     N = 2
     K = len(pairs)
     M = nx.number_of_nodes(G)
@@ -86,5 +87,4 @@ if __name__ == "__main__":
     if 5 != world.get_edge_cost(0,9):
         print("error")
     print("Reduced graph:")
-    print(nx.to_dict_of_dicts(world._reduced_graph))
-
+    print(nx.to_dict_of_dicts(world._reduced_graph)) 
