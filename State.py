@@ -1,11 +1,18 @@
 class State:
 
-    def __init__ (self, carLocs, packages, costSoFar):
+    def __init__(self, carLocs, packages, costSoFar):
         """
-        :param carLocs:
+        :param carLocs: a list of stacks keeping track of each car's
+            current location and path so far
         :type carLocs: list(list(int))
+        :param packages: a list of booleans showing whether each package
+            has been delivered or not
+        :type pacakages: list(bool)
+        :param costSoFar: the total cost so far from the start state this
+            state. This is later referred to as 'g'.
+        :type costSoFar: float
         """
-        self._carLocs = carLoc
+        self._carLocs = carLocs
         self._packages = packages
         self._g = costSoFar
         self._h = 0
@@ -31,9 +38,7 @@ class State:
         return self._carLocs[n]
 
     def get_car_loc(self, n):
-        if n >= len(self._carLocs):
-            return None
-        return self._carLocs[n][len(self._carLocs[n])-1]
+        return self.get_car_path(n)[len(self.get_car_path(n))-1]
 
     def get_package_status(self, k):
         if k >= len(self._packages):
@@ -41,12 +46,7 @@ class State:
         return self._packages[k]
 
     def get_num_delivered(self):
-        sum = 0
-        for i in range(len(self._packages)):
-            if self._packages[i]:
-    		sum += 1
-        return sum
-
+        return self._packages.count(True)
 
 def stateTransition(state):
     successors = []
