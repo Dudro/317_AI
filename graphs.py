@@ -2,7 +2,7 @@ import networkx as nx
 from networkx.drawing.layout import circular_layout
 import matplotlib.pyplot as plt
 
-def draw_graph(graph, source_dest_pairs=None):
+def draw_graph(graph, source_dest_pairs=None, garage=0):
     """
     Draw the given graph using Matplotlib.
 
@@ -12,11 +12,13 @@ def draw_graph(graph, source_dest_pairs=None):
         package, given in package order. If None, nodes are not annotated
         with source and destination labels. Default: None.
     :type source_dest_pairs: list((int, int))
+    :param garage: the garage node. Default: 0.
+    :type garage: int
     """
     layout = circular_layout(graph)
     nx.draw_networkx(graph, pos=layout, node_color='w')
     n_labels = dict((i, []) for i in graph.nodes())
-    n_labels[0].append('G ')
+    n_labels[garage].append('G ')
     if source_dest_pairs is not None:
         i = 0
         for (src, dest) in source_dest_pairs:
