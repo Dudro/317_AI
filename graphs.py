@@ -37,7 +37,9 @@ def draw_graph(graph, source_dest_pairs=None):
 
 def get_triangle_graph():
     """
-    Return a small triangle graph with source-destination pairs for testing.
+    Return a small triangle graph with source-destination 
+    pairs for testing.
+    :rtype: Graph, list((int,int))
     """
     triangle_size = 3
     triangle = nx.Graph()
@@ -61,6 +63,7 @@ def get_ogg_graph():
     """
     Return ogg (the Original Gangster Graph) with source-destination pairs
     for testing.
+    :rtype: Graph, list((int,int))
     """
     ogg_size = 9
     ogg = nx.Graph()
@@ -89,7 +92,12 @@ def get_ogg_graph():
     return ogg, pairs
 
 def get_circle_graph():
-    size = 10
+    """
+    Return a circular graph of size 10 with 
+    source-destination pairs for testing.
+    :rtype: Graph, list((int,int))
+    """
+size = 10
     circle = nx.Graph()
 
     for i in range(size):
