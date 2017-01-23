@@ -97,7 +97,7 @@ def get_circle_graph():
     source-destination pairs for testing.
     :rtype: Graph, list((int,int))
     """
-size = 10
+    size = 10
     circle = nx.Graph()
 
     for i in range(size):
