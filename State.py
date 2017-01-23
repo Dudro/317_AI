@@ -26,6 +26,9 @@ class State:
     def set_h(self, new):
         self._h = new
 
+    def get_number_of_cars(self):
+	return len(self._carLocs)
+
     def get_carLocs(self):
         return self._carLocs
 
@@ -47,9 +50,27 @@ class State:
 
     def get_num_delivered(self):
         return self._packages.count(True)
+   
+    def get_num_undelivered(self):
+	return self._packages.count(False)
 
+    def get_undelivered_packages(self):
+	return [x for x in range(0,len(_packages) if not _packages[x]]
+
+
+# this function is in between of completion, Needs work on it. Particularly assigning packages to each combination of cars.
 def stateTransition(state):
     successors = []
+    numberOfCars = state.get_number_of_cars();
+    unDelivered = state.get_num_undelivered();
+    for i in range(1,numerOfCars + 1):
+	for cars in combinations(numberOfCars,i):
+		for packsPerm in permutations(state.get_undelivered_packages(),i):
+			carWithPack = [-1] * numberOfCars
+			successors.append()
+
+
+
     #go get the world data from somewhere
     #for i in range(1, len(state.get_packages()) - state.get_num_delivered() + 1):
         #for each  combination of N pick i
