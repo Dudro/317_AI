@@ -30,7 +30,7 @@ if __name__ == "__main__":
     print("Reduced graph:")
     print(nx.to_dict_of_dicts(world._reduced_graph))
 
-    G, pairs = graphs.get_og_graph()
+    G, pairs = graphs.get_ogg_graph()
     N = 3
     K = len(pairs)
     M = nx.number_of_nodes(G)
