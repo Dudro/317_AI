@@ -28,8 +28,9 @@ def draw_graph(graph, source_dest_pairs=None):
             label_parts = n_labels[i]
             if label_parts:
                 label = ''.join(label_parts).strip()
-                scale = 1.13 + len(label)/100.0 # 1.13 seems to work well.
-                plt.text(x*scale, y*scale, s=label, ha='center', \
+                y_scale = 1.20 # 1.20 seems to work well.
+                x_scale = 1.17 + 1.05*len(label)/100.0 # 1.17 works here.
+                plt.text(x*x_scale, y*y_scale, s=label, ha='center', \
                         va='center')
     e_labels = dict(((v1, v2), weight) for (v1, v2, weight) in \
             graph.edges(data='weight'))
@@ -59,7 +60,7 @@ def get_triangle_graph():
 
     return triangle, pairs
 
-def get_og_graph():
+def get_ogg_graph():
     """
     Return ogg (the Original Gangster Graph) with source-destination pairs
     for testing.
@@ -102,16 +103,16 @@ def get_circle_graph():
 
     for i in range(size):
         circle.add_node(i)
-    circle.add_edge(0,1,weight=5)
-    circle.add_edge(1,2,weight=5)
-    circle.add_edge(2,3,weight=5)
-    circle.add_edge(3,4,weight=5)
-    circle.add_edge(4,5,weight=5)
-    circle.add_edge(5,6,weight=5)
-    circle.add_edge(6,7,weight=5)
-    circle.add_edge(7,8,weight=5)
-    circle.add_edge(8,9,weight=5)
-    circle.add_edge(9,0,weight=5)
+    circle.add_edge(0, 1, weight=5)
+    circle.add_edge(1, 2, weight=5)
+    circle.add_edge(2, 3, weight=5)
+    circle.add_edge(3, 4, weight=5)
+    circle.add_edge(4, 5, weight=5)
+    circle.add_edge(5, 6, weight=5)
+    circle.add_edge(6, 7, weight=5)
+    circle.add_edge(7, 8, weight=5)
+    circle.add_edge(8, 9, weight=5)
+    circle.add_edge(9, 0, weight=5)
 
     s1 = 0
     d1 = 1
