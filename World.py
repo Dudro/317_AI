@@ -2,7 +2,7 @@ import networkx as nx
 import random as rand
 class World:
 
-    def __init__(self, N, K, M, full_graph, source_dest_pairs=None):
+    def __init__(self, N, K, M, full_graph, source_dest_pairs=None, G=0):
         """
         :param source_dest_pairs:
         :type source_dest_pairs: list((int, int))
@@ -10,7 +10,7 @@ class World:
         self._full_graph = full_graph
         self._reduced_graph = None
         self._graph_as_dict = None
-        self._G = 0
+        self._G = G
         self._N = N
         self._K = K
         self._M = M
@@ -37,8 +37,8 @@ class World:
                 important.append(self._source_dest_pairs[i][0])
             if self._source_dest_pairs[i][1] not in important:
                 important.append(self._source_dest_pairs[i][1])
-        if 0 not in important: # add garage
-            important.append(0) 
+        if self._G not in important: # add garage
+            important.append(self._G) 
         return important
 
     def process_graph(self):
@@ -60,7 +60,8 @@ class World:
         if curr_loc >= self._M or goal >= self._M:
             print("error: index out of bounds!")
             return None
-        if curr_loc not in self._important_nodes or goal not in self._important_nodes:
+        if (curr_loc not in self._important_nodes) \
+                or (goal not in self._important_nodes):
             print("error: illegal node!")
             return None
         return self._graph_as_dict[curr_loc][goal]['weight']
