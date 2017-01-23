@@ -19,7 +19,7 @@ class State:
     def set_h(self, new):
         self._h = new
 
-    def get_carLoc(self):
+    def get_carLocs(self):
         return self._carLocs
 
     def get_packages(self):
@@ -43,6 +43,26 @@ class State:
     def get_num_delivered(self):
         sum = 0
         for i in range(len(self._packages)):
-            sum += 1 if self._packages[i]
+            if self._packages[i]:
+    		sum += 1
         return sum
 
+
+def stateTransition(state):
+    successors = []
+    #go get the world data from somewhere
+    #for i in range(1, len(state.get_packages()) - state.get_num_delivered() + 1):
+        #for each  combination of N pick i
+            #for each permutation of i packages
+                #calculate the sum of path costs for this permutation
+                #g = state.get_g() + path_cost_sum
+                #update the values of the list state.get_carLocs() for the new state
+                #update the values of the list state.get_packages() for the new state
+                #new_state = State(newLocs, newPackages, g)
+    
+                #calculate new_state's h() with the problem's chosen heuristic                
+
+                #compare new_state with fringe
+                #if it's not a duplicate or if it's a cheaper duplicate
+                    #successors.append(new_state)
+    return successors
