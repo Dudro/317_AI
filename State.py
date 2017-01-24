@@ -58,11 +58,8 @@ class State:
 	return self._packages.count(False)
 
     def get_undelivered_packages(self):
-	undelivered=[]
-	for x in range(0,len(_packages)):
-		if not _packages[x]:
-			undelivered.append(x)
-			return undelivered
+        with_index = zip(range(0, K), self._packages)
+        return [i for (i, delivered) in with_index if delivered]
 
 
 # this function is in between of completion, Needs work on it. Need to work on calculating the sum of path cost.
