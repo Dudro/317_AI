@@ -30,6 +30,15 @@ class World:
             pairs.append((src, dest))
         return pairs
 
+
+    def get_package_source(pkg_id):
+	pkg = self._source_dest_pairs[pkg_id]
+	return pkg[0]
+	
+    def get_package_dest(pkg_id):
+	pkg = self._source_dest_pairs[pkg_id]
+	return pkg[1]		
+
     def get_important_nodes(self):
         important = []
         for i in range(self._K):

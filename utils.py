@@ -2,7 +2,7 @@ def permutations(n, r):
     if n < r or n < 1 or r < 0:
         raise Exception("Must have: 0 <= r, 1 <= n, r <= n permutations.")
     else:
-        return _permutations_helper(range(1, n+1), r)
+        return _permutations_helper(range(0, n), r)
 
 def _permutations_helper(numbers, r):
     if r == 0:
@@ -19,7 +19,7 @@ def combinations(n, r):
     if n < r or n < 1 or r < 0:
         raise Exception("Must have: 0 <= r, 1 <= n, r <= n combinations.")
     else:
-        return _combinations_helper(range(1, n+1), r)
+        return _combinations_helper(range(0, n), r)
 
 def _combinations_helper(numbers, r):
     if r == 0:
