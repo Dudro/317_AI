@@ -1,49 +1,43 @@
 def permutations(n, r):
-    if n < r or n < 1 or r < 0:
-        raise Exception("Must have: 0 <= r, 1 <= n, r <= n permutations.")
-    else:
-        return _permutations_helper(range(0, n), r)
+    """
+    Returns a generator of all r-permutations of the numbers 0 to n-1.
+    """
+    return permutations_list(range(0, n), r)
 
-def _permutations_helper(numbers, r):
+def permutations_list(numbers, r):
+    """
+    Returns a generator of all r-permutations of the given list of numbers.
+    If numbers are not unique, this function will give the wrong result.
+    """
     if r == 0:
         yield []
     else:
         for num in numbers:
-            numbers_copy = [i for i in numbers if i != num]
-            for comb in _permutations_helper(numbers_copy, r-1):
+            remaining_numbers = [i for i in numbers if i != num]
+            for perm in permutations_list(remaining_numbers, r-1):
                 ret = [num]
-                ret.extend(comb)
+                ret.extend(perm)
                 yield ret
 
 def combinations(n, r):
-    if n < r or n < 1 or r < 0:
-        raise Exception("Must have: 0 <= r, 1 <= n, r <= n combinations.")
-    else:
-        return _combinations_helper(range(0, n), r)
+    """
+    Returns a generator of all r-combinations of the numbers 0 to n-1.
+    """
+    return combinations_list(range(0, n), r)
 
-def _combinations_helper(numbers, r):
+def combinations_list(numbers, r):
+    """
+    Returns a generator of all r-combinations of the given list of numbers.
+    If numbers are not unique, this function will give the wrong result.
+    """
     if r == 0:
         yield []
     else:
         for num in numbers:
-            index = numbers.index(num)
-	    numbers_copy = []
-	    for i in range(0,len(numbers)):
-		if i > index:
-		   numbers_copy.append(numbers[i])
-            for comb in _combinations_helper(numbers_copy, r-1):
+            remaining = range(numbers.index(num) + 1, len(numbers))
+            remaining_numbers = [numbers[i] for i in remaining]
+            for comb in combinations_list(remaining_numbers, r-1):
                 ret = [num]
                 ret.extend(comb)
                 yield ret
 
-
-
-print "Perms"
-for perm in permutations(3,2):
-   print perm
-print "Combs"
-for comb in combinations(3,2):
-   print comb
-print "More"
-for comb in _combinations_helper([3,2,3,4,4,5], 2):
-    print comb
