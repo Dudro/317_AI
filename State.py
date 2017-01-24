@@ -1,3 +1,4 @@
+import World as world_state
 class State:
 
     def __init__(self, carLocs, packages, costSoFar):
@@ -55,21 +56,39 @@ class State:
 	return self._packages.count(False)
 
     def get_undelivered_packages(self):
-	return [x for x in range(0,len(_packages) if not _packages[x]]
+	undelivered=[]
+	for x in range(0,len(_packages)):
+		if not _packages[x]:
+			undelivered.append(x)
+			return undelivered
 
 
-# this function is in between of completion, Needs work on it. Particularly assigning packages to each combination of cars.
+# this function is in between of completion, Needs work on it. Need to work on calculating the sum of path cost.
 def stateTransition(state):
     successors = []
     numberOfCars = state.get_number_of_cars();
     unDelivered = state.get_num_undelivered();
-    for i in range(1,numerOfCars + 1):
+    for i in range(0,numberOfCars):
 	for cars in combinations(numberOfCars,i):
 		for packsPerm in permutations(state.get_undelivered_packages(),i):
-			carWithPack = [-1] * numberOfCars
-			successors.append()
+			carWithPack = [-1] * numberOfCars	
+			#deep copy this, or shallow?
+			newCarLocs = copy.deepcopy(state.get_carLocs())
+			newPackages = copy.deepcopy(state.get_packages())
+			new_g = state.get_g()
+			for j in range(0,i):
+				carWithPack[cars[j]]=packsPerm[j]
+				#update the values of the list state.get_carLocs() for the new state
+				newCarLocs[cars[j]] = world_state.get_package_dest(carWithPack[cars[j]])				
+				#update the values of the list state.get_packages() for the new state
+				if carWithPack[j] != -1:
+					newPackages[carWithPack[j]]=True
 
-
+				new_g += world_state.get_path_cost(state.get_carLocs()[cars[j]], world_state.get_package_source(packsPerm[j]))
+				new_g += world_state.get_path_cost(state.get_carLocs()[cars[j]], world_state.get_package_dest(packsPerm[j]))
+			#new_state is assigned to updated state of carLocs and packages	
+	
+			new_state = State(newCarLocs, newPackages, new_g)
 
     #go get the world data from somewhere
     #for i in range(1, len(state.get_packages()) - state.get_num_delivered() + 1):
