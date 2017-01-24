@@ -1,5 +1,7 @@
 class State:
-
+    """
+    A State simply represents a state in the state space.
+    """
     def __init__(self, carLocs, packages, costSoFar):
         """
         :param carLocs: a list of stacks keeping track of each car's
