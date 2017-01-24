@@ -27,11 +27,17 @@ def _combinations_helper(numbers, r):
     else:
         for num in numbers:
             index = numbers.index(num)
-            numbers_copy = [i for i in numbers if numbers.index(i) > index]
+	    numbers_copy = []
+	    for i in range(0,len(numbers)):
+		if i > index:
+		   numbers_copy.append(numbers[i])
             for comb in _combinations_helper(numbers_copy, r-1):
                 ret = [num]
                 ret.extend(comb)
                 yield ret
+
+
+
 print "Perms"
 for perm in permutations(3,2):
    print perm
@@ -39,5 +45,5 @@ print "Combs"
 for comb in combinations(3,2):
    print comb
 print "More"
-for comb in _combinations_helper([3,4,5], 2):
+for comb in _combinations_helper([3,2,3,4,4,5], 2):
     print comb
