@@ -63,13 +63,13 @@ class World:
         else:
             return self._important_vertices
 
-    def get_package_source(pkg_id):
-	pkg = self._source_dest_pairs[pkg_id]
-	return pkg[0]
+    def get_package_source(self, pkg_id):
+        pkg = self._source_dest_pairs[pkg_id]
+        return pkg[0]
 	
-    def get_package_dest(pkg_id):
-	pkg = self._source_dest_pairs[pkg_id]
-	return pkg[1]		
+    def get_package_dest(self, pkg_id):
+        pkg = self._source_dest_pairs[pkg_id]
+        return pkg[1]		
 
     def get_important_nodes(self):
         important = []
