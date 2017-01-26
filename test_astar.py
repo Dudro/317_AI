@@ -1,7 +1,7 @@
 from astar import astar
 import networkx as nx
 
-romania = nx.Graph()
+romania = nx.Graph() # The map of Romania, as shown in AIMA, Ed. 3.
 romania.add_nodes_from(range(0, 20), visited=False)
 romania.add_edge(0, 1, weight=71)
 romania.add_edge(0, 4, weight=151)
@@ -27,8 +27,24 @@ romania.add_edge(16, 17, weight=142)
 romania.add_edge(17, 18, weight=92)
 romania.add_edge(18, 19, weight=87)
 
-class Graph_State:
+class Graph_State: # This is generic and could apply to other graphs, too.
+    """
+    A Graph_State consists of a vertex index in a graph, as well as the
+    path and the cost of the path that led from the initial state to the
+    this one.
+    """
     def __init__(self, vertex, cost_so_far, path_so_far):
+        """
+        :param vertex: a vertex in a graph
+        :type vertex: int
+        :param cost_so_far: the total cost so far from the initial state to
+            this state
+        :type cost_so_far: numeric
+        :param path_so_far: the path taken from the initial state to reach
+            this state
+        :type path_so_far: list(X), where X is either a Graph_State or a
+            vertex index (int)
+        """
         self._vertex = vertex
         self._cost_so_far = cost_so_far
         self._path_so_far = path_so_far
@@ -42,10 +58,20 @@ class Graph_State:
     def get_path_so_far(self):
         return self._path_so_far
 
-def at_bucharest(state):
+def at_bucharest(state): # Specific goal test for romania map.
     return state.get_vertex() == 8
 
-def trans_op(state):
+def trans_op(state): # Semi-specific to romania map.
+    """
+    Given a Graph_State, returns the neighboring map vertices as
+    Graph_States, with updated cost and path so far values. Marks the given
+    state as visited, so as to avoid introducing cycles into the search
+    space.
+
+    :param state: the state to which to apply the transition function
+    :type state: Graph_State
+    :rtype: list(Graph_State)
+    """
     vertex = state.get_vertex()
     romania.node[vertex]['visited'] = True
     neighbors = [v for v in romania.neighbors(vertex) \
@@ -59,7 +85,7 @@ def trans_op(state):
         successors.append(Graph_State(neighbor, new_cost, new_path))
     return successors
 
-
+# Values defining the heuristic function. Specific to romania map.
 straight_line_distance_bucharest = {}
 straight_line_distance_bucharest[0] = 380
 straight_line_distance_bucharest[1] = 374
@@ -82,10 +108,12 @@ straight_line_distance_bucharest[17] = 199
 straight_line_distance_bucharest[18] = 226
 straight_line_distance_bucharest[19] = 234
 
-def f(state):
+def f(state): # Specific to romania. Calculates f(x) = g(x) + h(x) for A*.
     return state.get_cost_so_far() + \
             straight_line_distance_bucharest[state.get_vertex()]
 
+# Generate (lazily) every solution (path) from Arad to Bucharest, with the
+# optimal (shortest) path being part of the first solution.
 for solution in astar(Graph_State(2, 0, [2]), at_bucharest, trans_op, f):
     print solution.get_cost_so_far(), solution.get_path_so_far()
 

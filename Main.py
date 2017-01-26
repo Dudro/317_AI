@@ -4,6 +4,8 @@ import test_graphs as tg
 
 def is_goal(state):
     """
+    Determines whether the given state is a goal state.
+
     :param state: A particular State
     :type state: State
     :rtype: True if this state is a goal state,
