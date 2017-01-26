@@ -21,6 +21,19 @@ class State:
         self._g = cost_so_far
         self._h = 0
 
+	def __eq__(self, other):
+		cars = self.get_carLocs()
+		other_cars = other.get_carLocs()
+		for i in range(cars):
+			if cars[i] != other_cars[i]:
+				return False
+		packs = self.get_packages()
+		other_packs = self.get_packages()
+		for i in range(packs):
+			if packs[i] != other_packs[i]:
+				return False
+		return True
+		
     def get_g(self):
         return self._g
 
@@ -80,7 +93,7 @@ class State:
                         world_state.get_package_source(i), \
                         world_state.get_package_dest(i))
 
-    def sum_of_package_distance_h(self, C):
+    def sum_of_package_distance_scaled_h(self):
         sum_of_package_distances = 0
         num_delivered = 0
         for i in range(len(self.get_packages())):
