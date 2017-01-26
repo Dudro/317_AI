@@ -62,7 +62,7 @@ def get_triangle_graph():
 
     return triangle, pairs
 
-def get_ogg_graph():
+def get_og_graph():
     """
     Return ogg (the Original Gangster Graph) with source-destination pairs
     for testing.
