@@ -4,9 +4,11 @@ import networkx as nx
 import graphs
 from World import World
 
+
 def show_graph(graph, pairs):
     draw_graph(graph, pairs)
     plt.show()
+
 
 def test_graphs():
     graph, pairs = graphs.get_triangle_graph()
@@ -14,7 +16,7 @@ def test_graphs():
     K = len(pairs)
     M = len(graph.nodes())
     show_graph(graph, pairs)
-    
+
     world = World(N, K, M, graph, pairs)
     print("Original map:")
     print(nx.to_dict_of_dicts(graph))
@@ -72,7 +74,7 @@ def test_graphs():
     show_graph(graph, pairs)
 
     world = World(N, K, M, graph, pairs)
-    print("Original map:") 
+    print("Original map:")
     print(nx.to_dict_of_dicts(graph))
     print("Important vertices:")
     print(world.get_important_vertices())
@@ -96,6 +98,8 @@ def test_graphs():
     if 5 != world.get_edge_cost(0, 9):
         print("error")
     print("Reduced map:")
-    print(nx.to_dict_of_dicts(world.get_reduced_map())) 
+    print(nx.to_dict_of_dicts(world.get_reduced_map()))
     show_graph(world.get_reduced_map(), pairs)
 
+
+test_graphs()
