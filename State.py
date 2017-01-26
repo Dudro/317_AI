@@ -62,7 +62,42 @@ class State:
         with_index = zip(range(0, K), self._packages)
         return [i for (i, delivered) in with_index if delivered]
 
+    def zero_h(self):
+        return 0    
 
+    def undelivered_h(self):
+        undelivered = 0
+        for p in self.get_packages():
+            if not p:
+                undelivered += 1 
+
+    def sum_of_package_distance_h(self):
+        sum_of_package_distances = 0
+        for i in range(len(self.get_packages)):
+            if not self.get_packages[i]: # if package is not yet delivered
+                sum_of_package_distance += \
+                        world_state.get_edge_cost( \
+                        world_state.get_package_source(i), \
+                        world_state.get_package_dest(i))
+
+    def sum_of_package_distance_h(self, C):
+        sum_of_package_distances = 0
+        num_delivered = 0
+        for i in range(len(self.get_packages())):
+            if not self.get_packages[i]: # if package is not yet delivered
+                sum_of_package_distance += \
+                        world_state.get_edge_cost( \
+                        world_state.get_package_source(i), \
+                        world_state.get_package_dest(i))
+            else:
+                num_delivered += 1
+        reduction_val = 1.0 / float(len(self.get_packages()))
+        scalar = 1 - (num_delivered * reduction_val)
+        return scalar * sum_of_package_distance
+
+    def lavie_h(self):
+        
+    
 # this function is in between of completion, Needs work on it. Need to work on calculating the sum of path cost.
 def stateTransition(state):
     successors = []
