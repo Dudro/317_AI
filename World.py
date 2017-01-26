@@ -102,7 +102,7 @@ class World:
             return None
         if (curr_loc not in self._important_vertices) \
                 or (goal not in self._important_vertices):
-            print("error: illegal node!")
+            print("error: illegal vertex!")
             return None
         return self._reduced_map_as_dict[curr_loc][goal]['weight']
 
