@@ -37,7 +37,7 @@ def test_graphs():
     print(nx.to_dict_of_dicts(world.get_reduced_map()))
     show_graph(world.get_reduced_map(), pairs)
 
-    graph, pairs = graphs.get_ogg_graph()
+    graph, pairs = graphs.get_og_graph()
     N = 3
     K = len(pairs)
     M = len(graph.nodes())
