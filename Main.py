@@ -28,6 +28,7 @@ if __name__ == "__main__":
         map, pairs = g.get_triangle_graph()
 		
         world = w.World(n, k, m, map, pairs)
+        world.process_map()
         s.world = world
         print((s.world == None), flush=True)
         cars = [[0] * n]
@@ -39,21 +40,22 @@ if __name__ == "__main__":
             print(str(solution.get_g()))
         print("Done triangle", flush=True)
         
-        # print("Starting OGG test")
+        print("Starting OGG test")
         
-        # n = 1
-        # k = 3
-        # m = 9
-        # map, pairs = g.get_og_graph()
+        n = 1
+        k = 3
+        m = 9
+        map, pairs = g.get_og_graph()
 		
-        # world = w.World(n, k, m, map, pairs)
+        world = w.World(n, k, m, map, pairs)
+        world.process_map()
+        s.world = world
+        cars = [[0] * n]
+        packages = [False] * k
 		
-        # cars = [0] * n
-        # packages = [False] * k
+        initial = s.State( cars, packages, 0)
 		
-        # initial = s.State( cars, packages, 0)
-		
-        # for solution in astar.astar(initial, is_goal, s.state_transition, f):
-            # print(str(solution.get_g()))
-        # print("Done")
+        for solution in astar.astar(initial, is_goal, s.state_transition, f):
+            print(str(solution.get_g()))
+        print("Done")
     
