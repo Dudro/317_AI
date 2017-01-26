@@ -2,7 +2,8 @@ def permutations(n, r):
     """
     Returns a generator of all r-permutations of the numbers 0 to n-1.
     """
-    return permutations_list(range(0, n), r)
+    return permutations_list(range(n), r)
+
 
 def permutations_list(numbers, r):
     """
@@ -14,25 +15,30 @@ def permutations_list(numbers, r):
     else:
         for num in numbers:
             remaining_numbers = [i for i in numbers if i != num]
-            for perm in permutations_list(remaining_numbers, r-1):
+            for perm in permutations_list(remaining_numbers, r - 1):
                 ret = [num]
                 ret.extend(perm)
                 yield ret
 
-                
-def permutations_exclude(n, r, exclude=[]):
-    numbers = list(range(0, n))
-    refnumbers = range(0, n)
-    for i in range(n):
-        if exclude[i]:
-            numbers.remove(refnumbers[i])
+
+def permutations_exclude(n, r, exclude=None):
+    """
+    Returns a generator of all r-combinations of the numbers 0 to n-1,
+    excluding any number i for which exclude[i] is True.
+    """
+    if exclude is None:
+        numbers = list(range(n))
+    else:
+        numbers = [i for i in range(n) if not exclude[i]]
     return permutations_list(numbers, r)
-                
+
+
 def combinations(n, r):
     """
     Returns a generator of all r-combinations of the numbers 0 to n-1.
     """
-    return combinations_list(range(0, n), r)
+    return combinations_list(range(n), r)
+
 
 def combinations_list(numbers, r):
     """
@@ -45,8 +51,7 @@ def combinations_list(numbers, r):
         for num in numbers:
             remaining = range(numbers.index(num) + 1, len(numbers))
             remaining_numbers = [numbers[i] for i in remaining]
-            for comb in combinations_list(remaining_numbers, r-1):
+            for comb in combinations_list(remaining_numbers, r - 1):
                 ret = [num]
                 ret.extend(comb)
                 yield ret
-
