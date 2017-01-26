@@ -40,3 +40,4 @@ test_comb_list([3, 2, 1, 4, 0], 3)
 test_perm_exclude(2, 1)
 test_perm_exclude(3, 2)
 test_perm_exclude(5, 3, [False, False, True, True, False])
+test_perm_list([0, 1, 4], 3)  # So perm_exclude and perm_list are equivalent.
