@@ -2,6 +2,7 @@ import networkx as nx
 from networkx.drawing.layout import circular_layout
 import matplotlib.pyplot as plt
 
+
 def draw_graph(graph, source_dest_pairs=None, garage=0):
     """
     Draw the given graph using Matplotlib.
@@ -30,13 +31,14 @@ def draw_graph(graph, source_dest_pairs=None, garage=0):
             label_parts = n_labels[i]
             if label_parts:
                 label = ''.join(label_parts).strip()
-                y_scale = 1.20 # 1.20 seems to work well.
-                x_scale = 1.17 + 1.05*len(label)/100.0 # 1.17 works here.
-                plt.text(x*x_scale, y*y_scale, s=label, ha='center', \
-                        va='center')
-    e_labels = dict(((v1, v2), weight) for (v1, v2, weight) in \
-            graph.edges(data='weight'))
+                y_scale = 1.20  # 1.20 seems to work well.
+                x_scale = 1.17 + 1.05 * len(label) / 100.0  # 1.17 works here.
+                plt.text(x * x_scale, y * y_scale, s=label, ha='center',
+                         va='center')
+    e_labels = dict(((v1, v2), weight) for (v1, v2, weight) in
+                    graph.edges(data='weight'))
     nx.draw_networkx_edge_labels(graph, pos=layout, edge_labels=e_labels)
+
 
 def get_triangle_graph():
     """
@@ -53,7 +55,7 @@ def get_triangle_graph():
     triangle.add_edge(0, 1, weight=10)
     triangle.add_edge(0, 2, weight=30)
     triangle.add_edge(1, 2, weight=20)
-    
+
     s1 = 1
     d1 = 2
     s2 = 2
@@ -62,7 +64,8 @@ def get_triangle_graph():
 
     return triangle, pairs
 
-def get_ogg_graph():
+
+def get_og_graph():
     """
     Return ogg (the Original Gangster Graph) with source-destination pairs
     for testing.
@@ -83,7 +86,7 @@ def get_ogg_graph():
     ogg.add_edge(6, 0, weight=51)
     ogg.add_edge(0, 7, weight=36)
     ogg.add_edge(7, 3, weight=15)
-    
+
     s1 = 6
     d1 = 2
     s2 = 3
@@ -93,6 +96,7 @@ def get_ogg_graph():
     pairs = [(s1, d1), (s2, d2), (s3, d3)]
 
     return ogg, pairs
+
 
 def get_circle_graph():
     """
@@ -127,7 +131,7 @@ def get_circle_graph():
     s5 = 4
     d5 = 5
     s6 = 5
-    d6 = 6  
+    d6 = 6
     s7 = 6
     d7 = 7
     s8 = 7
@@ -137,8 +141,7 @@ def get_circle_graph():
     s10 = 9
     d10 = 0
 
-    pairs = [(s1, d1), (s2, d2), (s3, d3), (s4, d4), (s5, d5), \
+    pairs = [(s1, d1), (s2, d2), (s3, d3), (s4, d4), (s5, d5),
              (s6, d6), (s7, d7), (s8, d8), (s9, d9), (s10, d10)]
-   
-    return circle, pairs
 
+    return circle, pairs

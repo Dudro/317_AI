@@ -63,13 +63,13 @@ class World:
         else:
             return self._important_vertices
 
-    def get_package_source(pkg_id):
-	pkg = self._source_dest_pairs[pkg_id]
-	return pkg[0]
+    def get_package_source(self, pkg_id):
+        pkg = self._source_dest_pairs[pkg_id]
+        return pkg[0]
 	
-    def get_package_dest(pkg_id):
-	pkg = self._source_dest_pairs[pkg_id]
-	return pkg[1]		
+    def get_package_dest(self, pkg_id):
+        pkg = self._source_dest_pairs[pkg_id]
+        return pkg[1]		
 
     def get_important_nodes(self):
         important = []
@@ -102,7 +102,7 @@ class World:
             return None
         if (curr_loc not in self._important_vertices) \
                 or (goal not in self._important_vertices):
-            print("error: illegal node!")
+            print("error: illegal vertex!")
             return None
         return self._reduced_map_as_dict[curr_loc][goal]['weight']
 
