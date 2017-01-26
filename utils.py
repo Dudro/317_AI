@@ -19,6 +19,15 @@ def permutations_list(numbers, r):
                 ret.extend(perm)
                 yield ret
 
+                
+def permutations_exclude(n, r, exclude=[]):
+    numbers = list(range(0, n))
+    refnumbers = range(0, n)
+    for i in range(n):
+        if exclude[i]:
+            numbers.remove(refnumbers[i])
+    return permutations_list(numbers, r)
+                
 def combinations(n, r):
     """
     Returns a generator of all r-combinations of the numbers 0 to n-1.

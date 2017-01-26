@@ -32,7 +32,7 @@ class State:
         cars = self.get_car_locs()
         other_cars = other.get_car_locs()
         for i in range(len(cars)):
-            if cars[i] != other_cars[i]:
+            if cars[i][len(cars[i]) -1 ] != other_cars[i][len(other_cars[i])-1]:
                 return False
         packs = self.get_packages()
         other_packs = self.get_packages()
@@ -54,6 +54,9 @@ class State:
         return len(self._car_locs)
 
     def get_car_locs(self):
+        """
+        Returns the stack of the car paths over time.
+        """
         return self._car_locs
 
     def get_packages(self):
@@ -123,24 +126,23 @@ def state_transition(state):
     successors = []
     number_of_cars = state.get_number_of_cars();
     undelivered = state.get_num_undelivered();
-    #print("Starting iteration", flush=True)
     for i in range(0, number_of_cars):
         for cars in combinations(number_of_cars, i + 1):
-            #print("Permutations of combinations")
             perms = 0
-            for packs_perm in permutations(state.get_num_undelivered(), i + 1):
+            #print("undelivered: " + str(state.get_num_undelivered()) + ", i: " + str(i))
+            #for packs_perm in permutations(state.get_num_undelivered(), i + 1):
+            for packs_perm in permutations_exclude(len(state.get_packages()), i + 1, state.get_packages()):
+                #print(packs_perm)
                 perms += 1
-                print("Permutation " + str(perms), flush=True)
-                #print("Building state")
+                #print("Permutation " + str(perms), flush=True)
                 car_with_pack = [-1] * number_of_cars
-                #deep copy this, or shallow?
                 new_car_locs = copy.deepcopy(state.get_car_locs())
                 new_packages = copy.deepcopy(state.get_packages())
                 new_g = state.get_g()
                 for j in range(0, i+1):
                     car_with_pack[cars[j]]=packs_perm[j]
                     #update the values of the list state.get_car_locs() for the new state
-                    new_car_locs[cars[j]] = world.get_package_dest(car_with_pack[cars[j]])				
+                    new_car_locs[cars[j]].append(world.get_package_dest(car_with_pack[cars[j]]))				
                     #update the values of the list state.get_packages() for the new state
                     if car_with_pack[j] != -1:
                         new_packages[car_with_pack[j]]=True
@@ -152,6 +154,6 @@ def state_transition(state):
                                     world.get_package_dest(packs_perm[j]))
                     # new_state is added to list of successors		
                 new_state = State(new_car_locs, new_packages, new_g)
-                print("Appending state", flush=True)
+                #print("Appending state", flush=True)
                 successors.append(new_state)
     return successors
