@@ -35,7 +35,7 @@ class State:
             if cars[i][len(cars[i]) -1 ] != other_cars[i][len(other_cars[i])-1]:
                 return False
         packs = self.get_packages()
-        other_packs = self.get_packages()
+        other_packs = other.get_packages()
         for i in range(len(packs)):
             if packs[i] != other_packs[i]:
                 return False
@@ -89,10 +89,7 @@ class State:
         return 0    
 
     def undelivered_h(self):
-        undelivered = 0
-        for p in self.get_packages():
-            if not p:
-                undelivered += 1 
+        return self.get_num_undelivered()
 
     def sum_of_package_distance_h(self):
         sum_of_package_distances = 0
@@ -100,20 +97,12 @@ class State:
             if not self.get_packages[i]: # if package is not yet delivered
                 sum_of_package_distance += \
                         world.get_edge_cost( \
-                        world.get_package_source(i), \
-                        world.get_package_dest(i))
+                            world.get_package_source(i), \
+                            world.get_package_dest(i))
 
     def sum_of_package_distance_scaled_h(self):
-        sum_of_package_distances = 0
-        num_delivered = 0
-        for i in range(len(self.get_packages())):
-            if not self.get_packages[i]: # if package is not yet delivered
-                sum_of_package_distance += \
-                        world.get_edge_cost( \
-                        world.get_package_source(i), \
-                        world.get_package_dest(i))
-            else:
-                num_delivered += 1
+        sum_of_package_distances = self.sum_of_package_distance_h()
+        num_delivered = self.get_num_delivered()
         reduction_val = 1.0 / float(len(self.get_packages()))
         scalar = 1 - (num_delivered * reduction_val)
         return scalar * sum_of_package_distance
@@ -124,8 +113,8 @@ class State:
 # this function is in between of completion, Needs work on it. Need to work on calculating the sum of path cost.
 def state_transition(state):
     successors = []
-    number_of_cars = state.get_number_of_cars();
-    undelivered = state.get_num_undelivered();
+    number_of_cars = state.get_number_of_cars()
+    undelivered = state.get_num_undelivered()
     for i in range(0, number_of_cars):
         for cars in combinations(number_of_cars, i + 1):
             perms = 0
