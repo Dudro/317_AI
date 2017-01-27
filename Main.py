@@ -15,8 +15,11 @@ def is_goal(state):
     return False if False in state.get_packages() else True
 
 
-def f_with_zero_h(state):
-    return state.get_g() + state.zero_h()
+def decorating_f(h):
+    def true_f(state):
+        return state.get_g() + h(state)
+
+    return true_f
 
 
 def a_star_any_graph(n, k, m, full_map, pairs, f):
@@ -29,7 +32,7 @@ def a_star_any_graph(n, k, m, full_map, pairs, f):
         print(solution.get_g(), solution.get_car_locs())
 
 
-def a_star_triange_graph(n, k, f):
+def a_star_triangle_graph(n, k, f):
     print("Starting triangle test", flush=True)
     full_map, pairs = graphs.get_triangle_graph()
     a_star_any_graph(n, k, full_map.number_of_nodes(), full_map, pairs, f)
@@ -44,7 +47,7 @@ def a_star_ogg_graph(n, k, f):
 
 
 if __name__ == "__main__":
-    a_star_triange_graph(1, 2, f_with_zero_h)
-    a_star_ogg_graph(1, 3, f_with_zero_h)
-    # a_star_triange_graph(2, 2, f_with_zero_h)
-    # a_star_ogg_graph(2, 3, f_with_zero_h)
+    a_star_triangle_graph(1, 2, decorating_f(State.zero_h))
+    a_star_ogg_graph(1, 3, decorating_f(State.zero_h))
+    # a_star_triangle_graph(2, 2, decorating_f(State.zero_h))
+    # a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
