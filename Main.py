@@ -46,8 +46,17 @@ def a_star_ogg_graph(n, k, f):
     print("Done OGG", flush=True)
 
 
+def a_star_circle_graph(n, f):
+    print("Starting circle test", flush=True)
+    full_map, pairs = graphs.get_circle_graph()
+    k = len(pairs)
+    #a_star_any_graph(n, k, full_map.number_of_nodes(), full_map, pairs, f)
+    print("Done circle", flush=True)
+
+
 if __name__ == "__main__":
-    a_star_triangle_graph(1, 2, decorating_f(State.zero_h))
-    a_star_ogg_graph(1, 3, decorating_f(State.zero_h))
+    #a_star_triangle_graph(1, 2, decorating_f(State.zero_h))
+    #a_star_ogg_graph(1, 3, decorating_f(State.zero_h))
+    a_star_circle_graph(1, decorating_f(State.zero_h))
     # a_star_triangle_graph(2, 2, decorating_f(State.zero_h))
     # a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
