@@ -144,14 +144,15 @@ def get_circle_graph():
              (s6, d6), (s7, d7), (s8, d8), (s9, d9), (s10, d10)]
     return circle, pairs
 
-def get_random_graph(number_of_nodes,number_of_cars,number_of_packages):
+def get_random_graph(number_of_nodes,number_of_cars,number_of_packages,our_seed=None):
     """
     :param number_of_nodes:
     :param number_of_cars:
     :param number_of_packages:
     :return: a random ugly graph
     """
-    graph = nx.dense_gnm_random_graph(number_of_nodes,random.randint(number_of_nodes,30))
+    random.seed(our_seed)
+    graph = nx.dense_gnm_random_graph(number_of_nodes,random.randint(number_of_nodes,30),seed = our_seed)
     connected_components = nx.connected_components(graph)
     first_node = list(next(connected_components))[0]
     for list_of_nodes in connected_components:
@@ -159,6 +160,8 @@ def get_random_graph(number_of_nodes,number_of_cars,number_of_packages):
     edges = graph.edges()
     for edge in edges:
         graph[edge[0]][edge[1]]['weight'] = random.randint(0,1000)
+    draw_graph(graph,None)
+    plt.show()
     pairs = []
     i = 0
     while i < number_of_packages:
