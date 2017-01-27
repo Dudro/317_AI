@@ -1,7 +1,7 @@
 from State import *
 from World import World
 import graphs
-from astar import a_star
+from astar import *
 
 
 def is_goal(state):
@@ -40,24 +40,21 @@ def recreate_paths(state):
     return all_paths
 
 
-def a_star_any_graph(n, k, m, full_map, pairs, f):
+def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None):
     world = World(n, k, m, full_map, pairs)
     world.process_map()
     cars = [[world.get_garage()]] * n
     packages = [False] * k
     initial = State(world, cars, packages, 0)
-    for solution in a_star(initial, is_goal, state_transition, f):
-        print(solution.get_g(), recreate_paths(solution))
-
-
-def a_star_optimal_any_graph(n, k, m, full_map, pairs, f):
-    world = World(n, k, m, full_map, pairs)
-    world.process_map()
-    cars = [[world.get_garage()]] * n
-    packages = [False] * k
-    initial = State(world, cars, packages, 0)
-    solution = next(a_star(initial, is_goal, state_transition, f))
-    print(solution.get_g(), solution.get_car_locs())
+    if num_sols is None:
+        for sol, count in a_star_count_nodes(initial, is_goal,
+                                             state_transition, f):
+            print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
+    else:
+        for i in range(num_sols):
+            sol, count = next(a_star_count_nodes(initial, is_goal,
+                                                 state_transition, f))
+            print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
 
 
 def a_star_triangle_graph(n, k, f):
@@ -78,8 +75,7 @@ def a_star_circle_graph(n, f):
     print("Starting circle test", flush=True)
     full_map, pairs = graphs.get_circle_graph()
     k = len(pairs)
-    a_star_optimal_any_graph(
-            n, k, full_map.number_of_nodes(), full_map, pairs, f)
+    a_star_any_graph(n, k, full_map.number_of_nodes(), full_map, pairs, f, 1)
     print("Done circle", flush=True)
 
 

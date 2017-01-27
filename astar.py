@@ -35,20 +35,32 @@ def a_star(initial_state, is_goal, trans_op, f):
     :type f: X => float, where X is any state type
     :rtype: X (returns a goal state)
     """
+    for (goal, _) in a_star_count_nodes(initial_state, is_goal, trans_op, f):
+        yield goal
+
+
+def a_star_count_nodes(initial_state, is_goal, trans_op, f):
+    """
+    Like a_star but also counts the number of expanded nodes (number of nodes
+    pulled out of queue).
+    :rtype: X, integral
+    """
     queue = PriorityQueue()
     counter = 0  # Needed to avoid priority queue trying to compare states.
     queue.put((f(initial_state), counter, initial_state))
     counter += 1
+    expanded = 0
     while not queue.empty():
         _, _, next_state = queue.get()
+        expanded += 1
         print("Next state cost: " + str(f(next_state)) + ", " +
               str(queue.qsize()), flush=True)
-        print("Next state details: ", flush = True)
+        print("Next state details: ", flush=True)
         print(next_state.get_car_locs(), flush=True)
         print(next_state.get_packages(), flush=True)
         if is_goal(next_state):
             # print("Yielding", flush=True)
-            yield next_state
+            yield next_state, expanded
         else:
             successors = trans_op(next_state)
             for successor in successors:
@@ -57,4 +69,4 @@ def a_star(initial_state, is_goal, trans_op, f):
                 print(successor.get_packages(), flush=True)
                 queue.put((f(successor), counter, successor))
                 counter += 1
-    return None
+    return None, expanded
