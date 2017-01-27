@@ -59,7 +59,8 @@ def a_star_triangle_graph(n, k, f):
 def a_star_ogg_graph(n, k, f):
     print("Starting OGG test", flush=True)
     full_map, pairs = graphs.get_og_graph()
-    a_star_any_graph(n, k, full_map.number_of_nodes(), full_map, pairs, f)
+    a_star_any_graph(
+            n, k, full_map.number_of_nodes(), full_map, pairs, f, num_sols = 1)
     print("Done OGG", flush=True)
 
 
@@ -73,7 +74,17 @@ def a_star_circle_graph(n, f):
 
 if __name__ == "__main__":
     a_star_triangle_graph(1, 2, decorating_f(State.zero_h))
+    print("ogg zero")
     a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
-    a_star_circle_graph(1, decorating_f(State.zero_h))
-    # a_star_triangle_graph(2, 2, decorating_f(State.zero_h))
-    # a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
+    print("ogg undelivered")
+    a_star_ogg_graph(2, 3, decorating_f(State.undelivered_h))
+    print("ogg sum_of_package_distance")
+    a_star_ogg_graph(2, 3, decorating_f(State.sum_of_package_distance_h))
+    print("ogg scaled")
+    a_star_ogg_graph(2, 3, decorating_f(State.sum_of_package_distance_scaled_h))
+    print("circle undelivered")
+    a_star_circle_graph(2, decorating_f(State.undelivered_h))
+    print("circle sum of distance")
+    a_star_circle_graph(2, decorating_f(State.sum_of_package_distance_h))
+    print("circle scaled")
+    a_star_circle_graph(2, decorating_f(State.sum_of_package_distance_scaled_h))
