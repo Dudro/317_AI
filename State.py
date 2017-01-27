@@ -1,4 +1,5 @@
 import copy
+from World import World
 from utils import *
 
 
@@ -7,10 +8,11 @@ class State:
     A State simply represents a state in the state space.
     """
 
-    world = None
-
-    def __init__(self, car_locs, packages, cost_so_far):
+    def __init__(self, world, car_locs, packages, cost_so_far):
         """
+        :param world: the world state that is unchanging but still part of
+            every state
+        :type world: World
         :param car_locs: a list of stacks keeping track of each car's
             current location and path so far
         :type car_locs: list(list(int))
@@ -21,6 +23,7 @@ class State:
             state. This is later referred to as 'g'.
         :type cost_so_far: float
         """
+        self._world = world
         self._car_locs = car_locs
         self._packages = packages
         self._g = cost_so_far
@@ -30,7 +33,8 @@ class State:
         cars = self.get_car_locs()
         other_cars = other.get_car_locs()
         for i in range(len(cars)):
-            if cars[i][len(cars[i]) - 1] != other_cars[i][len(other_cars[i]) - 1]:
+            if cars[i][len(cars[i]) - 1] != \
+                    other_cars[i][len(other_cars[i]) - 1]:
                 return False
         packs = self.get_packages()
         other_packs = other.get_packages()
@@ -38,6 +42,9 @@ class State:
             if packs[i] != other_packs[i]:
                 return False
         return True
+
+    def get_world(self):
+        return self._world
 
     def get_g(self):
         return self._g
@@ -94,9 +101,9 @@ class State:
         for i in range(len(self._packages)):
             if not self._packages[i]:  # if package is not yet delivered
                 sum_of_package_distances += \
-                    State.world.get_edge_cost(
-                        State.world.get_package_source(i),
-                        State.world.get_package_dest(i))
+                    self._world.get_edge_cost(
+                        self._world.get_package_source(i),
+                        self._world.get_package_dest(i))
         return sum_of_package_distances
 
     def sum_of_package_distance_scaled_h(self):
@@ -110,40 +117,40 @@ class State:
         return 0
 
 
-# this function is in between of completion, Needs work on it. Need to work on calculating the sum of path cost.
+# this function is in between of completion, Needs work on it.
+# Need to work on calculating the sum of path cost.
 def state_transition(state):
     successors = []
+    world = state.get_world()
     number_of_cars = state.get_number_of_cars()
-    # undelivered = state.get_num_undelivered()
-    for i in range(0, number_of_cars):
-        for cars in combinations(number_of_cars, i + 1):
-            perms = 0
-            # print("undelivered: " + str(state.get_num_undelivered()) + ", i: " + str(i))
-            # for packs_perm in permutations(state.get_num_undelivered(), i + 1):
-            for packs_perm in permutations_exclude(len(state.get_packages()), i + 1, state.get_packages()):
-                # print(packs_perm)
-                perms += 1
-                # print("Permutation " + str(perms), flush=True)
+    for i in range(1, number_of_cars + 1):
+        for cars in combinations(number_of_cars, i):
+            # TODO: Problem? What if len(state.get_packages()) < i?
+            for packs_perm in permutations_exclude(
+                    len(state.get_packages()), i, state.get_packages()):
                 car_with_pack = [-1] * number_of_cars
                 new_car_locs = copy.deepcopy(state.get_car_locs())
                 new_packages = copy.deepcopy(state.get_packages())
                 new_g = state.get_g()
-                for j in range(0, i + 1):
+                for j in range(0, i):
                     car_with_pack[cars[j]] = packs_perm[j]
-                    # update the values of the list state.get_car_locs() for the new state
+                    # update the values of the list state.get_car_locs()
+                    # for the new state
                     new_car_locs[cars[j]].append(
-                        State.world.get_package_dest(car_with_pack[cars[j]]))
-                    # update the values of the list state.get_packages() for the new state
+                        world.get_package_dest(car_with_pack[cars[j]]))
+                    # update the values of the list state.get_packages()
+                    # for the new state
                     if car_with_pack[j] != -1:
                         new_packages[car_with_pack[j]] = True
-                        new_g += State.world.get_edge_cost(
+                        new_g += world.get_edge_cost(
                             state.get_car_loc(cars[j]),
-                            State.world.get_package_source(packs_perm[j]))
-                        new_g += State.world.get_edge_cost(
-                            State.world.get_package_source(packs_perm[j]),
-                            State.world.get_package_dest(packs_perm[j]))
-                        # new_state is added to list of successors
-                new_state = State(new_car_locs, new_packages, new_g)
-                # print("Appending state", flush=True)
+                            world.get_package_source(packs_perm[j]))
+                        new_g += world.get_edge_cost(
+                            world.get_package_source(packs_perm[j]),
+                            world.get_package_dest(packs_perm[j]))
+                # new_state is added to list of successors
+                new_state = State(world, new_car_locs, new_packages, new_g)
+                # TODO: do we need to check that new state hasn't already been
+                #       visited? If not, what is the point of __eq__()?
                 successors.append(new_state)
     return successors

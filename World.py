@@ -1,10 +1,12 @@
 import networkx as nx
 import random as rand
 
+
 class World:
     """
     A World encompasses an instance of the problem.
     """
+
     def __init__(self, N, K, M, full_map, source_dest_pairs=None, G=0):
         """
         :param N: the number of cars
@@ -32,7 +34,7 @@ class World:
         self._reduced_map = None
         self._reduced_map_as_dict = None
         if source_dest_pairs is None:
-            self._source_dest_pairs = generate_random_package_routes()
+            self._source_dest_pairs = self.generate_random_package_routes()
         else:
             self._source_dest_pairs = source_dest_pairs
         self._important_vertices = None
@@ -41,12 +43,15 @@ class World:
     def generate_random_package_routes(self):
         pairs = []
         for i in range(self._K):
-            src = rand.randint(0, self._M-1)
+            src = rand.randint(0, self._M - 1)
             dest = src
             while dest == src:
-                dest = rand.randint(0, self._M-1)
+                dest = rand.randint(0, self._M - 1)
             pairs.append((src, dest))
         return pairs
+
+    def get_garage(self):
+        return self._G
 
     def get_important_vertices(self):
         if self._important_vertices is None:
@@ -56,8 +61,8 @@ class World:
                     important.append(self._source_dest_pairs[i][0])
                 if self._source_dest_pairs[i][1] not in important:
                     important.append(self._source_dest_pairs[i][1])
-            if self._G not in important: # add garage
-                important.append(self._G) 
+            if self._G not in important:  # add garage
+                important.append(self._G)
             self._important_vertices = important
             return important
         else:
@@ -66,25 +71,14 @@ class World:
     def get_package_source(self, pkg_id):
         pkg = self._source_dest_pairs[pkg_id]
         return pkg[0]
-	
+
     def get_package_dest(self, pkg_id):
         pkg = self._source_dest_pairs[pkg_id]
-        return pkg[1]		
-
-    def get_important_nodes(self):
-        important = []
-        for i in range(self._K):
-            if self._source_dest_pairs[i][0] not in important:
-                important.append(self._source_dest_pairs[i][0])
-            if self._source_dest_pairs[i][1] not in important:
-                important.append(self._source_dest_pairs[i][1])
-        if self._G not in important: # add garage
-            important.append(self._G) 
-        return important
+        return pkg[1]
 
     def process_map(self):
         # Retrieve all pairs paths and distances
-        self._important_vertices = self.get_important_vertices() 
+        self._important_vertices = self.get_important_vertices()
         paths = nx.floyd_warshall(self._full_map)
 
         self._reduced_map = nx.Graph()
@@ -108,6 +102,5 @@ class World:
 
     def get_reduced_map(self):
         if self._reduced_map is None:
-            process_map()
+            self.process_map()
         return self._reduced_map
-
