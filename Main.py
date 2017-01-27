@@ -26,16 +26,19 @@ def recreate_paths(state):
     world = state.get_world()
     all_paths = []
     for car_stack in state.get_car_locs():
-        loc = car_stack.pop()
-        this_path = []
-        while car_stack:  # Means "while car_stack is not empty"
-            prev = car_stack.pop()
-            if prev != loc:
-                if this_path:  # Means "if this_path is not empty"
-                    this_path.pop()  # Remove last item since it's duplicated.
-                this_path.extend(world.get_shortest_path(loc, prev))
-            loc = prev
-        this_path.reverse()
+        if len(car_stack) == 1:  # Car is still at garage
+            this_path = [car_stack.pop()]
+        else:
+            loc = car_stack.pop()
+            this_path = []
+            while car_stack:  # Means "while car_stack is not empty"
+                prev = car_stack.pop()
+                if prev != loc:
+                    if this_path:  # Means "if this_path is not empty"
+                        this_path.pop()  # Remove last item; it's duplicated.
+                    this_path.extend(world.get_shortest_path(loc, prev))
+                loc = prev
+            this_path.reverse()
         all_paths.append(this_path)
     return all_paths
 
@@ -49,12 +52,12 @@ def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None):
     if num_sols is None:
         for sol, count in a_star_count_nodes(initial, is_goal,
                                              state_transition, f):
-            print("Count", count, "cost", sol.get_g(), sol.get_car_locs())
+            print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
     else:
         for i in range(num_sols):
             sol, count = next(a_star_count_nodes(initial, is_goal,
                                                  state_transition, f))
-            print("Count", count, "cost", sol.get_g(), sol.get_car_locs())
+            print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
 
 
 def a_star_triangle_graph(n, k, f):
