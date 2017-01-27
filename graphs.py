@@ -1,7 +1,7 @@
 import networkx as nx
 from networkx.drawing.layout import circular_layout
 import matplotlib.pyplot as plt
-
+import random
 
 def draw_graph(graph, source_dest_pairs=None, garage=0):
     """
@@ -106,7 +106,6 @@ def get_circle_graph():
     """
     size = 10
     circle = nx.Graph()
-
     for i in range(size):
         circle.add_node(i)
     circle.add_edge(0, 1, weight=5)
@@ -143,5 +142,33 @@ def get_circle_graph():
 
     pairs = [(s1, d1), (s2, d2), (s3, d3), (s4, d4), (s5, d5),
              (s6, d6), (s7, d7), (s8, d8), (s9, d9), (s10, d10)]
-
     return circle, pairs
+
+def get_random_graph(number_of_nodes,number_of_cars,number_of_packages):
+    """
+    :param number_of_nodes:
+    :param number_of_cars:
+    :param number_of_packages:
+    :return: a random ugly graph
+    """
+    graph = nx.dense_gnm_random_graph(number_of_nodes,random.randint(number_of_nodes,30))
+    connected_components = nx.connected_components(graph)
+    first_node = list(next(connected_components))[0]
+    for list_of_nodes in connected_components:
+        graph.add_edge(first_node,list(list_of_nodes)[0])
+    edges = graph.edges()
+    for edge in edges:
+        graph[edge[0]][edge[1]]['weight'] = random.randint(0,1000)
+    pairs = []
+    i = 0
+    while i < number_of_packages:
+        s = random.randint(0,number_of_nodes-1)
+        d = random.randint(0, number_of_nodes-1)
+        while d == s :
+            d = random.randint(0, number_of_nodes-1)
+        if [s,d] not in pairs:
+            pairs.append([s,d])
+            i = i + 1
+
+    return graph, pairs
+
