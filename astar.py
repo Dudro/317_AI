@@ -1,6 +1,7 @@
 from queue import PriorityQueue
 
-def astar(initial_state, is_goal, trans_op, f):
+
+def a_star(initial_state, is_goal, trans_op, f):
     """
     A generic A* implementation for solving informed search problems. It
     is implemented as a generator, meaning that it yields the first
@@ -19,7 +20,8 @@ def astar(initial_state, is_goal, trans_op, f):
     initial state.
 
     :param initial_state: the initial state of the problem
-    :type state: X, where X is the argument type of is_goal, trans_op and f
+    :type initial_state: X, where X is the argument type of is_goal, trans_op
+        and f
     :param is_goal: a function that takes a state, x, of type X, and
         returns a boolean indicating whether x is a goal state
     :type is_goal: X => bool, where X is any state type
@@ -34,15 +36,18 @@ def astar(initial_state, is_goal, trans_op, f):
     :rtype: X (returns a goal state)
     """
     queue = PriorityQueue()
-    queue.put((f(initial_state), initial_state))
+    counter = 0  # Needed to avoid priority queue trying to compare states.
+    queue.put((f(initial_state), counter, initial_state))
+    counter += 1
     while not queue.empty():
-        _, next_state = queue.get()
-        # print("Next state cost: " + str(f(next_state)) + ", " + str(queue.qsize()), flush=True)
+        _, _, next_state = queue.get()
+        # print("Next state cost: " + str(f(next_state)) + ", " +
+        #       str(queue.qsize()), flush=True)
         # print("Next state details: ", flush = True)
         # print(next_state.get_car_locs(), flush=True)
         # print(next_state.get_packages(), flush=True)
         if is_goal(next_state):
-            #print("Yielding", flush=True)
+            # print("Yielding", flush=True)
             yield next_state
         else:
             successors = trans_op(next_state)
@@ -50,7 +55,6 @@ def astar(initial_state, is_goal, trans_op, f):
                 # print("Examining successor: ", flush=True)
                 # print(successor.get_car_locs(), flush=True)
                 # print(successor.get_packages(), flush=True)
-                queue.put((f(successor), successor))
-
-
+                queue.put((f(successor), counter, successor))
+                counter += 1
     return None
