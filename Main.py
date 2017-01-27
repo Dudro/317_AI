@@ -2,6 +2,7 @@ from State import *
 from World import World
 import graphs
 from astar import *
+import sys
 
 
 def is_goal(state):
@@ -43,7 +44,13 @@ def recreate_paths(state):
     return all_paths
 
 
-def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None):
+def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None, output = None):
+
+    orignal_stdout = sys.stdout
+    if output is not None:
+        opened_file = open(output,'a+')
+        sys.stdout = opened_file
+
     world = World(n, k, m, full_map, pairs)
     world.process_map()
     cars = [[world.get_garage()]] * n
@@ -58,6 +65,7 @@ def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None):
             sol, count = next(a_star_count_nodes(initial, is_goal,
                                                  state_transition, f))
             print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
+    sys.stdout = orignal_stdout
 
 
 def a_star_triangle_graph(n, k, f):
@@ -83,7 +91,7 @@ def a_star_circle_graph(n, f):
     print("Done circle", flush=True)
 
 
-if __name__ == "__main__":
+def known_graphs_test():
     a_star_triangle_graph(1, 2, decorating_f(State.zero_h))
     print("ogg zero")
     a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
@@ -99,3 +107,18 @@ if __name__ == "__main__":
     a_star_circle_graph(2, decorating_f(State.sum_of_package_distance_h))
     print("circle scaled")
     a_star_circle_graph(2, decorating_f(State.sum_of_package_distance_scaled_h))
+
+def simulations(number_of_cars, number_of_packages, number_of_nodes,h, number_of_simulations = 100):
+    for i in range(number_of_simulations):
+        random_graph, pairs = graphs.get_random_graph(number_of_nodes,number_of_cars,number_of_packages)
+        k = len(pairs)
+        a_star_any_graph(number_of_cars, number_of_packages, number_of_nodes, random_graph, pairs, h, 1,'output.txt')
+
+
+
+if __name__ == "__main__":
+    simulations(4,8,20,State.sum_of_package_distance_h)
+
+
+
+

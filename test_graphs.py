@@ -101,7 +101,7 @@ def test_graphs():
     print(nx.to_dict_of_dicts(world.get_reduced_map()))
     # show_graph(world.get_reduced_map(), pairs)
 
-    graph, pairs = get_random_graph(10, 2, 5)
+    graph, pairs = get_random_graph(10, 2, 5,10)
     show_graph(graph, pairs)
 
 test_graphs()
