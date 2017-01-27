@@ -49,12 +49,12 @@ def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None):
     if num_sols is None:
         for sol, count in a_star_count_nodes(initial, is_goal,
                                              state_transition, f):
-            print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
+            print("Count", count, "cost", sol.get_g(), sol.get_car_locs())
     else:
         for i in range(num_sols):
             sol, count = next(a_star_count_nodes(initial, is_goal,
                                                  state_transition, f))
-            print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
+            print("Count", count, "cost", sol.get_g(), sol.get_car_locs())
 
 
 def a_star_triangle_graph(n, k, f):
@@ -81,7 +81,7 @@ def a_star_circle_graph(n, f):
 
 if __name__ == "__main__":
     a_star_triangle_graph(1, 2, decorating_f(State.zero_h))
-    a_star_ogg_graph(1, 3, decorating_f(State.zero_h))
+    a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
     a_star_circle_graph(1, decorating_f(State.zero_h))
     # a_star_triangle_graph(2, 2, decorating_f(State.zero_h))
     # a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
