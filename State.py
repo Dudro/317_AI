@@ -137,6 +137,8 @@ def state_transition(state):
                     # update the values of the list state.get_car_locs()
                     # for the new state
                     new_car_locs[cars[j]].append(
+                        world.get_package_source(car_with_pack[cars[j]]))
+                    new_car_locs[cars[j]].append(
                         world.get_package_dest(car_with_pack[cars[j]]))
                     # update the values of the list state.get_packages()
                     # for the new state
