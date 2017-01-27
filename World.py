@@ -108,3 +108,11 @@ class World:
 
     def get_shortest_path(self, source, dest):
         return self._all_pairs_shortest_paths[source][dest]
+
+    def get_package_cost(self, package):
+        """
+        Returns the edge cost between the given package's source and
+        destination in the map.
+        """
+        return self.get_edge_cost(self.get_package_source(package),
+                                  self.get_package_dest(package))
