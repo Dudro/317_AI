@@ -31,6 +31,7 @@ class World:
         self._K = K
         self._M = M
         self._full_map = full_map
+        self._all_pairs_shortest_paths = nx.all_pairs_shortest_path(full_map)
         self._reduced_map = None
         self._reduced_map_as_dict = None
         if source_dest_pairs is None:
@@ -104,3 +105,14 @@ class World:
         if self._reduced_map is None:
             self.process_map()
         return self._reduced_map
+
+    def get_shortest_path(self, source, dest):
+        return self._all_pairs_shortest_paths[source][dest]
+
+    def get_package_cost(self, package):
+        """
+        Returns the edge cost between the given package's source and
+        destination in the map.
+        """
+        return self.get_edge_cost(self.get_package_source(package),
+                                  self.get_package_dest(package))
