@@ -122,25 +122,26 @@ def state_transition(state):
     world = state.get_world()
     number_of_cars = state.get_number_of_cars()
     for i in range(1, number_of_cars + 1):
-        print("Trying all combinations with just", i, "cars moving.")
+        #print("Trying all combinations with just", i, "cars moving.")
         for cars in combinations(number_of_cars, i):
-            print("Trying combination:", cars)
+            #print("Trying combination:", cars)
             # TODO: Problem? What if len(state.get_packages()) < i?
-            print("Trying all permutations of", i, "package assignments.")
+            #print("Trying all permutations of", i, "package assignments.")
             for packs_perm in permutations_exclude(
                     len(state.get_packages()), i, state.get_packages()):
-                print("Trying permutation:", packs_perm)
+                # print("Trying permutation:", packs_perm)
                 car_with_pack = [-1] * number_of_cars
                 new_car_locs = [[world.get_garage()]] * number_of_cars 
                 for n in range(number_of_cars):
                     new_car_locs[n] = copy.deepcopy(state.get_car_path(n))
-                
                 new_packages = copy.deepcopy(state.get_packages())
                 new_g = state.get_g()
                 
                 for j in range(0, i):
                     car_with_pack[cars[j]] = packs_perm[j]
-                    print("Car with pack: " + str(car_with_pack), flush=True)
+                    #print("Car with pack: " + str(car_with_pack), flush=True)
+                    #print("Cars: " + str(cars), flush=True)
+                    #print("Packs Perm: " + str(packs_perm), flush=True)
                     # update the values of the list state.get_car_locs()
                     # for the new state
                     new_car_locs[cars[j]].append(
@@ -150,18 +151,18 @@ def state_transition(state):
                     # update the values of the list state.get_packages()
                     # for the new state
                     if car_with_pack[cars[j]] != -1:
-                        new_packages[car_with_pack[j]] = True
+                        new_packages[car_with_pack[cars[j]]] = True
                         new_g += world.get_edge_cost(
                             state.get_car_loc(cars[j]),
                             world.get_package_source(packs_perm[j]))
                         new_g += world.get_package_cost(packs_perm[j])
                 # new_state is added to list of successors
-                print("Resulting total cost so far:", new_g)
+                #print("Resulting total cost so far:", new_g)
 
                 new_state = State(world, new_car_locs, new_packages, new_g)
-                print("Generated successor: ", flush=True)
-                print(new_state.get_car_locs(), flush=True)
-                print(new_state.get_packages(), flush=True)
+                #print("Generated successor: ", flush=True)
+                #print(new_state.get_car_locs(), flush=True)
+                #print(new_state.get_packages(), flush=True)
                 # TODO: do we need to check that new state hasn't already been
                 #       visited? If not, what is the point of __eq__()?
                 successors.append(new_state)
