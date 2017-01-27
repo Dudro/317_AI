@@ -1,61 +1,50 @@
-import State as s
-import World as w 
-import test_graphs as tg
-import graphs as g
-import astar
+from State import *
+from World import World
+import graphs
+from astar import a_star
+
 
 def is_goal(state):
     """
     Determines whether the given state is a goal state.
 
-    :param state: A particular State
+    :param state: a particular state
     :type state: State
-    :rtype: True if this state is a goal state,
-        False otherwise.
+    :rtype: True if the given state is a goal state, False otherwise.
     """
     return False if False in state.get_packages() else True
 
-def f(state):
+
+def f_with_zero_h(state):
     return state.get_g() + state.zero_h()
-	
+
+
+def a_star_any_graph(n, k, m, full_map, pairs, f):
+    world = World(n, k, m, full_map, pairs)
+    world.process_map()
+    cars = [[world.get_garage()]] * n
+    packages = [False] * k
+    initial = State(world, cars, packages, 0)
+    for solution in a_star(initial, is_goal, state_transition, f):
+        print(solution.get_g(), solution.get_car_locs())
+
+
+def a_star_triange_graph(n, k, f):
+    print("Starting triangle test", flush=True)
+    full_map, pairs = graphs.get_triangle_graph()
+    a_star_any_graph(n, k, full_map.number_of_nodes(), full_map, pairs, f)
+    print("Done triangle", flush=True)
+
+
+def a_star_ogg_graph(n, k, f):
+    print("Starting OGG test", flush=True)
+    full_map, pairs = graphs.get_og_graph()
+    a_star_any_graph(n, k, full_map.number_of_nodes(), full_map, pairs, f)
+    print("Done OGG", flush=True)
+
+
 if __name__ == "__main__":
-        #tg.test_graphs()
-        print("Starting triangle test", flush=True)
-        
-        n = 1
-        k = 2
-        m = 3
-        map, pairs = g.get_triangle_graph()
-		
-        world = w.World(n, k, m, map, pairs)
-        world.process_map()
-        s.world = world
-        print((s.world == None), flush=True)
-        cars = [[0] * n]
-        packages = [False] * k
-		
-        initial = s.State( cars, packages, 0)
-		
-        for solution in astar.astar(initial, is_goal, s.state_transition, f):
-            print(str(solution.get_g()))
-        print("Done triangle", flush=True)
-        
-        print("Starting OGG test")
-        
-        n = 1
-        k = 3
-        m = 9
-        map, pairs = g.get_og_graph()
-		
-        world = w.World(n, k, m, map, pairs)
-        world.process_map()
-        s.world = world
-        cars = [[0] * n]
-        packages = [False] * k
-		
-        initial = s.State( cars, packages, 0)
-		
-        for solution in astar.astar(initial, is_goal, s.state_transition, f):
-            print(str(solution.get_g()))
-        print("Done")
-    
+    a_star_triange_graph(1, 2, f_with_zero_h)
+    a_star_ogg_graph(1, 3, f_with_zero_h)
+    # a_star_triange_graph(2, 2, f_with_zero_h)
+    # a_star_ogg_graph(2, 3, f_with_zero_h)
