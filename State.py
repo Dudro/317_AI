@@ -124,12 +124,12 @@ def state_transition(state):
     for i in range(1, number_of_cars + 1):
         print("Trying all combinations with just", i, "cars moving.")
         for cars in combinations(number_of_cars, i):
-            print("Trying combination:", cars)
+            #print("Trying combination:", cars)
             # TODO: Problem? What if len(state.get_packages()) < i?
-            print("Trying all permutations of", i, "package assignments.")
+            #print("Trying all permutations of", i, "package assignments.")
             for packs_perm in permutations_exclude(
                     len(state.get_packages()), i, state.get_packages()):
-                print("Trying permutation:", packs_perm)
+                # print("Trying permutation:", packs_perm)
                 car_with_pack = [-1] * number_of_cars
                 new_car_locs = [[world.get_garage()]] * number_of_cars 
                 for n in range(number_of_cars):
@@ -141,6 +141,8 @@ def state_transition(state):
                 for j in range(0, i):
                     car_with_pack[cars[j]] = packs_perm[j]
                     print("Car with pack: " + str(car_with_pack), flush=True)
+                    print("Cars: " + str(cars), flush=True)
+                    print("Packs Perm: " + str(packs_perm), flush=True)
                     # update the values of the list state.get_car_locs()
                     # for the new state
                     new_car_locs[cars[j]].append(
@@ -150,7 +152,7 @@ def state_transition(state):
                     # update the values of the list state.get_packages()
                     # for the new state
                     if car_with_pack[cars[j]] != -1:
-                        new_packages[car_with_pack[j]] = True
+                        new_packages[car_with_pack[cars[j]]] = True
                         new_g += world.get_edge_cost(
                             state.get_car_loc(cars[j]),
                             world.get_package_source(packs_perm[j]))
