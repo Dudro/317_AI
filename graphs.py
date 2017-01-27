@@ -160,8 +160,6 @@ def get_random_graph(number_of_nodes,number_of_cars,number_of_packages,our_seed=
     edges = graph.edges()
     for edge in edges:
         graph[edge[0]][edge[1]]['weight'] = random.randint(0,1000)
-    draw_graph(graph,None)
-    plt.show()
     pairs = []
     i = 0
     while i < number_of_packages:
