@@ -15,7 +15,7 @@ def test_graphs():
     N = 1
     K = len(pairs)
     M = len(graph.nodes())
-    show_graph(graph, pairs)
+    # show_graph(graph, pairs)
 
     world = World(N, K, M, graph, pairs)
     print("Original map:")
@@ -37,7 +37,7 @@ def test_graphs():
         print("error")
     print("Reduced map:")
     print(nx.to_dict_of_dicts(world.get_reduced_map()))
-    show_graph(world.get_reduced_map(), pairs)
+    # show_graph(world.get_reduced_map(), pairs)
 
     graph, pairs = graphs.get_og_graph()
     N = 3
@@ -65,13 +65,13 @@ def test_graphs():
         print("error")
     print("Reduced map:")
     print(nx.to_dict_of_dicts(world.get_reduced_map()))
-    show_graph(world.get_reduced_map(), pairs)
+    # show_graph(world.get_reduced_map(), pairs)
 
     graph, pairs = graphs.get_circle_graph()
     N = 2
     K = len(pairs)
     M = len(graph.nodes())
-    show_graph(graph, pairs)
+    # show_graph(graph, pairs)
 
     world = World(N, K, M, graph, pairs)
     print("Original map:")
@@ -99,7 +99,6 @@ def test_graphs():
         print("error")
     print("Reduced map:")
     print(nx.to_dict_of_dicts(world.get_reduced_map()))
-    show_graph(world.get_reduced_map(), pairs)
-
+    # show_graph(world.get_reduced_map(), pairs)
 
 test_graphs()
