@@ -4,17 +4,6 @@ import graphs
 from astar import *
 
 
-def is_goal(state):
-    """
-    Determines whether the given state is a goal state.
-
-    :param state: a particular state
-    :type state: State
-    :rtype: True if the given state is a goal state, False otherwise.
-    """
-    return False if False in state.get_packages() else True
-
-
 def decorating_f(h):
     def true_f(state):
         return state.get_g() + h(state)
