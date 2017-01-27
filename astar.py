@@ -53,20 +53,20 @@ def a_star_count_nodes(initial_state, is_goal, trans_op, f):
     while not queue.empty():
         _, _, next_state = queue.get()
         expanded += 1
-        print("Next state cost: " + str(f(next_state)) + ", " +
-              str(queue.qsize()), flush=True)
-        print("Next state details: ", flush=True)
-        print(next_state.get_car_locs(), flush=True)
-        print(next_state.get_packages(), flush=True)
+        #print("Next state cost: " + str(f(next_state)) + ", " +
+        #      str(queue.qsize()), flush=True)
+        #print("Next state details: ", flush=True)
+        #print(next_state.get_car_locs(), flush=True)
+        #print(next_state.get_packages(), flush=True)
         if is_goal(next_state):
             # print("Yielding", flush=True)
             yield next_state, expanded
         else:
             successors = trans_op(next_state)
             for successor in successors:
-                print("Examining successor: ", flush=True)
-                print(successor.get_car_locs(), flush=True)
-                print(successor.get_packages(), flush=True)
+                #print("Examining successor: ", flush=True)
+                #print(successor.get_car_locs(), flush=True)
+                #print(successor.get_packages(), flush=True)
                 queue.put((f(successor), counter, successor))
                 counter += 1
     return None, expanded
