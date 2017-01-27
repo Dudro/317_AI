@@ -66,6 +66,6 @@ def a_star_ogg_graph(n, k, f):
 
 if __name__ == "__main__":
     a_star_triangle_graph(1, 2, decorating_f(State.zero_h))
-    a_star_ogg_graph(1, 3, decorating_f(State.zero_h))
+    a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
     # a_star_triangle_graph(2, 2, decorating_f(State.zero_h))
     # a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
