@@ -34,7 +34,7 @@ def recreate_paths(state):
     return all_paths
 
 
-def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None, output=None):
+def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=None, output=None):
     """
     :param n: The number of cars in this problem.
     :type n: int
@@ -48,8 +48,8 @@ def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None, output=None):
     :param pairs: A list of source-destination pairs of all the packages in the 
         problem.
     :type pairs: list(tuple(int,int))
-    :param f: The heurisitic function that A* will use.
-    :type f: function
+    :param h: The heurisitic function that A* will use.
+    :type h: function
     :param num_sols: The number of solutions the user would like to generate.
     :type num_sols: int
     :param output: The name of a file to which output can be redirected.
