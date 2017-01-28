@@ -3,7 +3,8 @@ from World import World
 import graphs
 from astar import *
 import sys
-
+import utils as u
+from networkx import number_of_nodes
 
 def decorating_f(h):
     def true_f(state):
@@ -59,8 +60,19 @@ def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None, output=None):
     provided in 'f' is admissible, the first solution generated will be
     the optimal solution.  Output can be redirected to a file if specified.
     """
-    
-    # Redirect output to file if specified.
+    if k != len(pairs):
+        u.eprint("Error: k is not equal to the length of src-dest pairs.")
+        return None
+    if m != number_of_nodes(full_map):
+        u.eprint("Error: m is not equal to the size of the graph.")
+        return None
+    if n < 1:
+        u.eprint("Error: n cannot be less than 1.")
+        return None
+    if num_sols < 1 and num_sols is not None:
+        u.eprint("Error: The number of solutions cannot be less than 1.")
+        return None
+
     original_stdout = sys.stdout
     if output is not None:
         opened_file = open(output,'a+')
@@ -124,15 +136,35 @@ def known_graphs_test():
     a_star_circle_graph(2, decorating_f(State.sum_of_package_distance_scaled_h))
 
 
-def simulations(number_of_cars, number_of_packages, number_of_nodes,h, number_of_simulations = 100):
-    for i in range(number_of_simulations):
-        random_graph, pairs = graphs.get_random_graph(number_of_nodes,number_of_cars,number_of_packages)
-        k = len(pairs)
-        a_star_any_graph(number_of_cars, number_of_packages, number_of_nodes, random_graph, pairs, h, 1,'output.txt')
+def astar_simulations(n, k, m, h, num_sims=100, output=None):
+    """
+    :param n: The number of cars in this problem.
+    :type n: int
+    :param k: The number of packages in this problem.
+    :type k: int
+    :param m: The number of vertices in the graph for this problem.
+    :type m: int
+    :param h: The heurisitic function that A* will use.
+    :type h: function
+    :param num_sims: The number of graphs to generate, and the number of times
+        the simulation will run.
+    :type num_sims: int
+    :param output: The name of a file to which output can be redirected.
+    :type output: String
+    Run A* with a specified heuristic on many different problems.  The number
+    of times to run the simulation depends on the input 'num_sims'.  The method
+    'get_random_graph' will generate a new random problem according to the 
+    parameters n, k, and m for as many simulation as specified.  Output from 
+    A* will be redirected to a file if provided.
+    """
+    for i in range(num_sims):
+        random_graph, pairs = graphs.get_random_graph(k, m)
+        a_star_any_graph(n, k, m, random_graph, pairs, h, 1,'output.txt')
 
 
 if __name__ == "__main__":
-    simulations(4,8,20,State.sum_of_package_distance_h)
+    sims = 10
+    astar_simulations(3, 12, 20, State.sum_of_package_distance_h, num_sims=sims)
 
 
 
