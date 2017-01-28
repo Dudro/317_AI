@@ -34,7 +34,33 @@ def recreate_paths(state):
 
 
 def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None, output=None):
-
+    """
+    :param n: The number of cars in this problem.
+    :type n: int
+    :param k: The number of packages in this problem.
+    :type k: int
+    :param m: The number of vertices in the original graph for this problem.
+    :type m: int
+    :param full_map: The full graph of the problem.  It could be generated 
+        randomly or predefined.
+    :type full_map: Graph
+    :param pairs: A list of source-destination pairs of all the packages in the 
+        problem.
+    :type pairs: list(tuple(int,int))
+    :param f: The heurisitic function that A* will use.
+    :type f: function
+    :param num_sols: The number of solutions the user would like to generate.
+    :type num_sols: int
+    :param output: The name of a file to which output can be redirected.
+    :type output: String
+    Run A* with a specified heuristic on the a problem.  The problem 
+    definition involves n, k, m, the graph, and the src-dest pairs.  The 
+    number of solutions to generate can be specified, but if the heurisitic
+    provided in 'f' is admissible, the first solution generated will be
+    the optimal solution.  Output can be redirected to a file if specified.
+    """
+    
+    # Redirect output to file if specified.
     original_stdout = sys.stdout
     if output is not None:
         opened_file = open(output,'a+')
