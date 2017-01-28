@@ -2,6 +2,7 @@ import networkx as nx
 from networkx.drawing.layout import circular_layout
 import matplotlib.pyplot as plt
 import random
+import math
 
 def draw_graph(graph, source_dest_pairs=None, garage=0):
     """
@@ -157,7 +158,7 @@ def get_random_graph(k, m, seed=None):
     random.seed(seed)
     graph = nx.dense_gnm_random_graph(
             m, 
-            random.randint(m, 30), 
+            random.randint(math.ceil(m*0.75), math.floor(m*1.25)), 
             seed=seed)
     connected_components = nx.connected_components(graph)
     first_node = list(next(connected_components))[0]
