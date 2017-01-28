@@ -1,3 +1,5 @@
+import sys
+
 def permutations(n, r):
     """
     Returns a generator of all r-permutations of the numbers 0 to n-1.
@@ -55,3 +57,6 @@ def combinations_list(numbers, r):
                 ret = [num]
                 ret.extend(comb)
                 yield ret
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
