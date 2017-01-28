@@ -39,7 +39,6 @@ def draw_graph(graph, source_dest_pairs=None, garage=0):
                     graph.edges(data='weight'))
     nx.draw_networkx_edge_labels(graph, pos=layout, edge_labels=e_labels)
 
-
 def get_triangle_graph():
     """
     Return a small triangle graph with source-destination 

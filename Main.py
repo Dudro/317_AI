@@ -5,6 +5,7 @@ from astar import *
 import sys
 import utils as u
 from networkx import number_of_nodes
+import matplotlib.pyplot as plt
 
 def decorating_f(h):
     def true_f(state):
@@ -33,6 +34,13 @@ def recreate_paths(state):
         all_paths.append(this_path)
     return all_paths
 
+
+def filter_pairs(pairs):
+    valid_pairs = []
+    for sd in pairs:
+        if sd[0] != sd[1]:
+            valid_pairs.append(sd)
+    return valid_pairs
 
 def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=None, output=None):
     """
@@ -85,12 +93,12 @@ def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=None, output=None):
     initial = State(world, cars, packages, 0)
     if num_sols is None:
         for sol, count in a_star_count_nodes(initial, is_goal,
-                                             state_transition, f):
+                                             state_transition, h):
             print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
     else:
         for i in range(num_sols):
             sol, count = next(a_star_count_nodes(initial, is_goal,
-                                                 state_transition, f))
+                                                 state_transition, h))
             print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
     sys.stdout = original_stdout
 
@@ -159,12 +167,15 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
     """
     for i in range(num_sims):
         random_graph, pairs = graphs.get_random_graph(k, m)
+        pairs = filter_pairs(pairs)
+        graphs.draw_graph(random_graph)
+        plt.show()
         a_star_any_graph(n, k, m, random_graph, pairs, h, 1,'output.txt')
 
 
 if __name__ == "__main__":
-    sims = 10
-    astar_simulations(3, 12, 20, State.sum_of_package_distance_h, num_sims=sims)
+    sims = 5
+    astar_simulations(4, 12, 30, State.sum_of_package_distance_h, num_sims=sims)
 
 
 
