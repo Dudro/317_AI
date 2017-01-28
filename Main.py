@@ -77,7 +77,7 @@ def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=None, output=None):
     if n < 1:
         u.eprint("Error: n cannot be less than 1.")
         return None
-    if num_sols < 1 and num_sols is not None:
+    if num_sols is not None and num_sols < 1:
         u.eprint("Error: The number of solutions cannot be less than 1.")
         return None
 
@@ -94,12 +94,12 @@ def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=None, output=None):
     if num_sols is None:
         for sol, count in a_star_count_nodes(initial, is_goal,
                                              state_transition, h):
-            print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
+            print("count=", count, "cost=", sol.get_g(), recreate_paths(sol))
     else:
         for i in range(num_sols):
             sol, count = next(a_star_count_nodes(initial, is_goal,
                                                  state_transition, h))
-            print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
+            print("count=", count, "cost=", sol.get_g(), recreate_paths(sol))
     sys.stdout = original_stdout
 
 
@@ -168,15 +168,19 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
     for i in range(num_sims):
         random_graph, pairs = graphs.get_random_graph(k, m)
         pairs = filter_pairs(pairs)
-        graphs.draw_graph(random_graph)
-        plt.show()
+        #graphs.draw_graph(random_graph)
+        #plt.show()
         a_star_any_graph(n, k, m, random_graph, pairs, h, 1,'output.txt')
 
 
 if __name__ == "__main__":
     sims = 5
-    astar_simulations(4, 12, 30, State.sum_of_package_distance_h, num_sims=sims)
-
+    n = 3
+    k = 2
+    m = 12
+    astar_simulations(n, k, m, State.undelivered_h, num_sims=sims)
+    astar_simulations(n, k, m, State.sum_of_package_distance_scaled_h, num_sims=sims)
+    astar_simulations(n, k, m, State.sum_of_package_distance_h, num_sims=sims)
 
 
 
