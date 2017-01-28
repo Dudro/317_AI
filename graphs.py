@@ -144,15 +144,22 @@ def get_circle_graph():
              (s6, d6), (s7, d7), (s8, d8), (s9, d9), (s10, d10)]
     return circle, pairs
 
-def get_random_graph(number_of_nodes,number_of_cars,number_of_packages,our_seed=None):
+def get_random_graph(k, m, seed=None):
     """
-    :param number_of_nodes:
-    :param number_of_cars:
-    :param number_of_packages:
+    :param n: The number of
+    :param k: The number of packages for the problem.
+    :type k: int
+    :param m: The number of vertices to generate the graph with.
+    :type m: int
+    :param seed: A seed for the random problem generation.
+    :type seed: int
     :return: a random ugly graph
     """
-    random.seed(our_seed)
-    graph = nx.dense_gnm_random_graph(number_of_nodes,random.randint(number_of_nodes,30),seed = our_seed)
+    random.seed(seed)
+    graph = nx.dense_gnm_random_graph(
+            m, 
+            random.randint(m, 30), 
+            seed=seed)
     connected_components = nx.connected_components(graph)
     first_node = list(next(connected_components))[0]
     for list_of_nodes in connected_components:
@@ -162,11 +169,11 @@ def get_random_graph(number_of_nodes,number_of_cars,number_of_packages,our_seed=
         graph[edge[0]][edge[1]]['weight'] = random.randint(0,1000)
     pairs = []
     i = 0
-    while i < number_of_packages:
-        s = random.randint(0,number_of_nodes-1)
-        d = random.randint(0, number_of_nodes-1)
+    while i < k:
+        s = random.randint(0, m-1)
+        d = random.randint(0, m-1)
         while d == s :
-            d = random.randint(0, number_of_nodes-1)
+            d = random.randint(0, m-1)
         if [s,d] not in pairs:
             pairs.append([s,d])
             i = i + 1
