@@ -33,9 +33,9 @@ def recreate_paths(state):
     return all_paths
 
 
-def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None, output = None):
+def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None, output=None):
 
-    orignal_stdout = sys.stdout
+    original_stdout = sys.stdout
     if output is not None:
         opened_file = open(output,'a+')
         sys.stdout = opened_file
@@ -54,7 +54,7 @@ def a_star_any_graph(n, k, m, full_map, pairs, f, num_sols=None, output = None):
             sol, count = next(a_star_count_nodes(initial, is_goal,
                                                  state_transition, f))
             print("Count", count, "cost", sol.get_g(), recreate_paths(sol))
-    sys.stdout = orignal_stdout
+    sys.stdout = original_stdout
 
 
 def a_star_triangle_graph(n, k, f):
@@ -97,12 +97,12 @@ def known_graphs_test():
     print("circle scaled")
     a_star_circle_graph(2, decorating_f(State.sum_of_package_distance_scaled_h))
 
+
 def simulations(number_of_cars, number_of_packages, number_of_nodes,h, number_of_simulations = 100):
     for i in range(number_of_simulations):
         random_graph, pairs = graphs.get_random_graph(number_of_nodes,number_of_cars,number_of_packages)
         k = len(pairs)
         a_star_any_graph(number_of_cars, number_of_packages, number_of_nodes, random_graph, pairs, h, 1,'output.txt')
-
 
 
 if __name__ == "__main__":
