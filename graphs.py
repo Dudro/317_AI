@@ -176,9 +176,8 @@ def get_random_graph(k, m, seed=None):
         while d == s :
             d = random.randint(0, m-1)
         #Potential bug: if k is much greater than m, we might try to generate unique pairs forever
-        if [s,d] not in pairs:
-            pairs.append([s,d])
-            i = i + 1
+        pairs.append([s,d])
+        i = i + 1
 
     return graph, pairs
 
