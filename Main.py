@@ -142,10 +142,10 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
     
 
 if __name__ == "__main__":
-    sims = 10
-    n = 2
-    k = 3
-    m = 18
+    sims = 100
+    n = 5
+    k = 5
+    m = 25
     data = astar_simulations(
             n, 
             k, 
@@ -153,10 +153,12 @@ if __name__ == "__main__":
             State.sum_of_package_distance_h, 
             num_sims=sims)
     
-    name = "n"+str(n)+".k"+str(k)+".m"+str(m)+".json"
+    name = "n"+str(n)+".k"+str(k)+".m"+str(m)
     
+    file_name = name + ".json"
     with open(name, 'w+') as out:
         json.dump(data, out, indent=4)
 
-    u.output_plot("plot.html", data) 
+    plot_name = name + ".html"
+    u.output_plot(plot_name, data) 
 
