@@ -164,7 +164,7 @@ if __name__ == "__main__":
     h = State.sum_of_package_distance_h
     h_name = "sum"
     
-    #Argument order: filename, number of simulations, n, k, m
+    #Argument order: filename, number of simulations, n, k, m, heuristic
     if len(sys.argv) > 1:
         try: 
             sims = int(sys.argv[1])

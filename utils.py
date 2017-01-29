@@ -74,6 +74,7 @@ def eprint(*args, **kwargs):
 def output_plot(path, data):
     from plotly import offline as py
     from plotly import graph_objs as go
+    from plotly import tools
 
     plot_data = {}
     for key in data[0].keys():
@@ -89,8 +90,23 @@ def output_plot(path, data):
             plot_data[k]['x'].append(i)
             plot_data[k]['y'].append(v)
 
-    to_plot = []
-    for k in sorted(plot_data.keys()):
-        to_plot.append(go.Scatter(plot_data[k]))
+#     to_plot = []
+#     for k in sorted(plot_data.keys()):
+#         to_plot.append(go.Scatter(plot_data[k]))
+
+
+    cost = go.Scatter(plot_data["cost_sum"])
+    preprocessing = go.Scatter(plot_data["preprocessing_time"])
+    simulation = go.Scatter(plot_data["simulation_time"])
+    nodes = go.Scatter(plot_data["node_count"])
+
+    to_plot = tools.make_subplots(rows=3, cols=2,
+                    specs=[[{'colspan': 2}, None], [{}, {}], [{'colspan': 2}, None]],
+					subplot_titles=('Total Path Cost','Preprocessing Time',
+									 'Simulation Time', 'Total Nodes Expanded'))
+    to_plot.append_trace(cost, 1, 1)
+    to_plot.append_trace(preprocessing, 2, 1)
+    to_plot.append_trace(simulation, 2, 2)
+    to_plot.append_trace(nodes, 3, 1)
 
     py.plot(to_plot, filename=path, auto_open=False)
