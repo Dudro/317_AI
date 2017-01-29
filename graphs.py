@@ -155,7 +155,8 @@ def get_random_graph(k, m, seed=None):
     :type seed: int
     :return: a random ugly graph
     """
-    random.seed(seed)
+    if seed != None:
+        random.seed(seed)
     graph = nx.dense_gnm_random_graph(
             m, 
             random.randint(math.ceil(m*0.75), math.floor(m*1.25)), 
