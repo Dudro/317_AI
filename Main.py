@@ -86,8 +86,12 @@ def a_star_any_graph(
         u.eprint("Error: The number of solutions cannot be less than 1.")
         return None
     
+    
     world = World(n, k, m, full_map, pairs)
+    timer.start_timer(t)
     world.process_map()
+    s = '{1:.4f}'.format(t, timer.end_timer(t))
+    data[t]['preprocessing_time'] = s
     cars = [[world.get_garage()]] * n
     packages = [False] * k
     initial = State(world, cars, packages, 0)
@@ -99,7 +103,7 @@ def a_star_any_graph(
         data[t]['node_count'] = count
         data[t]['cost_sum'] = sol.get_g()
         s = '{1:.4f}'.format(t, timer.end_timer(t))
-        data[t]['time'] = s
+        data[t]['simulation_time'] = s
         # print(recreate_paths(sol))
     else:
         for i in range(num_sols):
@@ -139,13 +143,46 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
         a_star_any_graph(n, k, m, random_graph, pairs, h, data, t=i)
     
     return data
-    
+
+
+def dump_json_data(name, data):
+    file_name = name + ".json"
+    with open(file_name, 'w+') as out:
+        json.dump(data, out, indent=4)
+
+def plot_results(name, data):
+    plot_name = name + ".html"
+    u.output_plot(plot_name, data)
 
 if __name__ == "__main__":
-    sims = 100
-    n = 5
+
+    #default values
+    sims = 25
+    n = 2
     k = 5
-    m = 25
+    m = 30
+    
+    if len(sys.argv) > 1:
+        try: 
+            sims = int(sys.argv[1])
+        except ValueError:
+            u.eprint("Invalid simulation argument.")
+    if len(sys.argv) > 2:
+        try: 
+            n = int(sys.argv[2])
+        except ValueError:
+            u.eprint("Invalid vehicle argument.")
+    if len(sys.argv) > 3:
+        try: 
+            k = int(sys.argv[3])
+        except ValueError:
+            u.eprint("Invalid package argument.")
+    if len(sys.argv) > 4:
+        try: 
+            m = int(sys.argv[4])
+        except ValueError:
+            u.eprint("Invalid location argument.")
+    
     data = astar_simulations(
             n, 
             k, 
@@ -155,10 +192,7 @@ if __name__ == "__main__":
     
     name = "n"+str(n)+".k"+str(k)+".m"+str(m)
     
-    file_name = name + ".json"
-    with open(file_name, 'w+') as out:
-        json.dump(data, out, indent=4)
+    dump_json_data(name, data)
 
-    plot_name = name + ".html"
-    u.output_plot(plot_name, data) 
+    plot_results(name, data)
 
