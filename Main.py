@@ -6,6 +6,7 @@ import sys
 import utils as u
 from networkx import number_of_nodes
 import matplotlib.pyplot as plt
+import timing as t
 
 def decorating_f(h):
     def true_f(state):
@@ -170,16 +171,15 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
         pairs = filter_pairs(pairs)
         #graphs.draw_graph(random_graph)
         #plt.show()
+        t.start_timer()
         a_star_any_graph(n, k, m, random_graph, pairs, h, 1,'output.txt')
-
+        print('t {0} = {1:.4f}'.format(i, t.end_timer(i)))
 
 if __name__ == "__main__":
-    sims = 5
-    n = 3
-    k = 2
-    m = 12
-    astar_simulations(n, k, m, State.undelivered_h, num_sims=sims)
-    astar_simulations(n, k, m, State.sum_of_package_distance_scaled_h, num_sims=sims)
+    sims = 10
+    n = 2
+    k = 5
+    m = 14
     astar_simulations(n, k, m, State.sum_of_package_distance_h, num_sims=sims)
 
 
