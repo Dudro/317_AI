@@ -156,7 +156,7 @@ if __name__ == "__main__":
     name = "n"+str(n)+".k"+str(k)+".m"+str(m)
     
     file_name = name + ".json"
-    with open(name, 'w+') as out:
+    with open(file_name, 'w+') as out:
         json.dump(data, out, indent=4)
 
     plot_name = name + ".html"
