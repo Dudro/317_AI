@@ -1,3 +1,4 @@
+import json
 from State import *
 from World import World
 import graphs
@@ -6,7 +7,8 @@ import sys
 import utils as u
 from networkx import number_of_nodes
 import matplotlib.pyplot as plt
-import timing as t
+import timing as timer
+
 
 def decorating_f(h):
     def true_f(state):
@@ -36,14 +38,16 @@ def recreate_paths(state):
     return all_paths
 
 
-def filter_pairs(pairs):
-    valid_pairs = []
-    for sd in pairs:
-        if sd[0] != sd[1]:
-            valid_pairs.append(sd)
-    return valid_pairs
-
-def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=None, output=None):
+def a_star_any_graph(
+        n, 
+        k, 
+        m, 
+        full_map, 
+        pairs, 
+        h, 
+        data,
+        num_sols=None, 
+        t=None):
     """
     :param n: The number of cars in this problem.
     :type n: int
@@ -61,8 +65,8 @@ def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=None, output=None):
     :type h: function
     :param num_sols: The number of solutions the user would like to generate.
     :type num_sols: int
-    :param output: The name of a file to which output can be redirected.
-    :type output: String
+    :param t: The number of the simulation for the timer.
+    :type t: int
     Run A* with a specified heuristic on the a problem.  The problem 
     definition involves n, k, m, the graph, and the src-dest pairs.  The 
     number of solutions to generate can be specified, but if the heurisitic
@@ -81,70 +85,28 @@ def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=None, output=None):
     if num_sols is not None and num_sols < 1:
         u.eprint("Error: The number of solutions cannot be less than 1.")
         return None
-
-    original_stdout = sys.stdout
-    if output is not None:
-        opened_file = open(output,'a+')
-        sys.stdout = opened_file
-
+    
     world = World(n, k, m, full_map, pairs)
     world.process_map()
     cars = [[world.get_garage()]] * n
     packages = [False] * k
     initial = State(world, cars, packages, 0)
-    if num_sols is None:
-        for sol, count in a_star_count_nodes(initial, is_goal,
-                                             state_transition, h):
-            print("count=", count, "cost=", sol.get_g(), recreate_paths(sol))
+    
+    if num_sols is None: 
+        timer.start_timer(t)
+        sol, count = next(
+                a_star_count_nodes(initial, is_goal, state_transition, h))
+        data[t]['node_count'] = count
+        data[t]['cost_sum'] = sol.get_g()
+        s = '{1:.4f}'.format(t, timer.end_timer(t))
+        data[t]['time'] = s
+        # print(recreate_paths(sol))
     else:
         for i in range(num_sols):
             sol, count = next(a_star_count_nodes(initial, is_goal,
                                                  state_transition, h))
             print("count=", count, "cost=", sol.get_g(), recreate_paths(sol))
-    sys.stdout = original_stdout
-
-
-def a_star_triangle_graph(n, k, f):
-    print("Starting triangle test", flush=True)
-    full_map, pairs = graphs.get_triangle_graph()
-    a_star_any_graph(n, k, full_map.number_of_nodes(), full_map, pairs, f)
-    print("Done triangle", flush=True)
-
-
-def a_star_ogg_graph(n, k, f):
-    print("Starting OGG test", flush=True)
-    full_map, pairs = graphs.get_og_graph()
-    a_star_any_graph(
-            n, k, full_map.number_of_nodes(), full_map, pairs, f, num_sols = 1)
-    print("Done OGG", flush=True)
-
-
-def a_star_circle_graph(n, f):
-    print("Starting circle test", flush=True)
-    full_map, pairs = graphs.get_circle_graph()
-    k = len(pairs)
-    a_star_any_graph(n, k, full_map.number_of_nodes(), full_map, pairs, f, 1)
-    print("Done circle", flush=True)
-
-
-def known_graphs_test():
-    a_star_triangle_graph(1, 2, decorating_f(State.zero_h))
-    print("ogg zero")
-    a_star_ogg_graph(2, 3, decorating_f(State.zero_h))
-    print("ogg undelivered")
-    a_star_ogg_graph(2, 3, decorating_f(State.undelivered_h))
-    print("ogg sum_of_package_distance")
-    a_star_ogg_graph(2, 3, decorating_f(State.sum_of_package_distance_h))
-    print("ogg scaled")
-    a_star_ogg_graph(2, 3, decorating_f(State.sum_of_package_distance_scaled_h))
-    print("circle undelivered")
-    a_star_circle_graph(2, decorating_f(State.undelivered_h))
-    print("circle sum of distance")
-    a_star_circle_graph(2, decorating_f(State.sum_of_package_distance_h))
-    print("circle scaled")
-    a_star_circle_graph(2, decorating_f(State.sum_of_package_distance_scaled_h))
-
-
+    
 def astar_simulations(n, k, m, h, num_sims=100, output=None):
     """
     :param n: The number of cars in this problem.
@@ -166,21 +128,35 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
     parameters n, k, and m for as many simulation as specified.  Output from 
     A* will be redirected to a file if provided.
     """
+        
+    # Initialize dictionaries for data collection
+    data = [{} for i in range(num_sims)]
+    # Begin running the simulations
     for i in range(num_sims):
         random_graph, pairs = graphs.get_random_graph(k, m)
-        pairs = filter_pairs(pairs)
-        #graphs.draw_graph(random_graph)
-        #plt.show()
-        t.start_timer()
-        a_star_any_graph(n, k, m, random_graph, pairs, h, 1,'output.txt')
-        print('t {0} = {1:.4f}'.format(i, t.end_timer(i)))
+        pairs = u.filter_pairs(pairs)
+        u.eprint("Starting problem " + str(i), flush=True)
+        a_star_any_graph(n, k, m, random_graph, pairs, h, data, t=i)
+    
+    return data
+    
 
 if __name__ == "__main__":
     sims = 10
     n = 2
-    k = 5
-    m = 14
-    astar_simulations(n, k, m, State.sum_of_package_distance_h, num_sims=sims)
+    k = 3
+    m = 18
+    data = astar_simulations(
+            n, 
+            k, 
+            m, 
+            State.sum_of_package_distance_h, 
+            num_sims=sims)
+    
+    name = "n"+str(n)+".k"+str(k)+".m"+str(m)+".json"
+    
+    with open(name, 'w+') as out:
+        json.dump(data, out, indent=4)
 
-
+    u.output_plot("plot.html", data) 
 
