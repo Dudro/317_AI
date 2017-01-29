@@ -161,7 +161,10 @@ if __name__ == "__main__":
     n = 2
     k = 5
     m = 30
+    h = State.sum_of_package_distance_h
+    h_name = "sum"
     
+    #Argument order: filename, number of simulations, n, k, m
     if len(sys.argv) > 1:
         try: 
             sims = int(sys.argv[1])
@@ -182,15 +185,30 @@ if __name__ == "__main__":
             m = int(sys.argv[4])
         except ValueError:
             u.eprint("Invalid location argument.")
+    if len(sys.argv) > 5:
+        if sys.argv[5] == "zero":
+            h = State.zero_h
+            h_name = "zero"
+        elif sys.argv[5] == "undelivered":
+            h = State.undelivered_h
+            h_name = "undelivered"
+        elif sys.argv[5] == "scaled":
+            h = State.sum_of_package_distance_scaled_h
+            h_name = "scaled"
+        elif sys.argv[5] == "sum":
+            h = State.sum_of_package_distance_h
+            h_name = "sum"
+        else:
+            u.eprint("Invalid heuristic argument.")
     
     data = astar_simulations(
             n, 
             k, 
             m, 
-            State.sum_of_package_distance_h, 
+            h, 
             num_sims=sims)
     
-    name = "n"+str(n)+".k"+str(k)+".m"+str(m)
+    name = "n"+str(n)+".k"+str(k)+".m"+str(m)+"."+h_name
     
     dump_json_data(name, data)
 
