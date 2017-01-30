@@ -3,6 +3,7 @@ from State import *
 from World import World
 import graphs
 from astar import *
+from localbeam import *
 import sys
 import utils as u
 from networkx import number_of_nodes
@@ -36,6 +37,69 @@ def recreate_paths(state):
             this_path.reverse()
         all_paths.append(this_path)
     return all_paths
+
+def localbeam_any_graph(
+        n,
+        k,
+        m,
+        full_map,
+        pairs,
+        h,
+        data,
+        kLimit,
+        num_sols=None,
+        t=None,
+):
+    """
+    :param n:
+    :param k:
+    :param m:
+    :param full_map:
+    :param pairs:
+    :param h:
+    :param data:
+    :param kLimit:
+    :param num_sols:
+    :param t:
+    :return:
+
+    if k != len(pairs):
+        u.eprint("Error: k is not equal to the length of src-dest pairs.")
+        return None
+    if m != number_of_nodes(full_map):
+        u.eprint("Error: m is not equal to the size of the graph.")
+        return None
+    if n < 1:
+        u.eprint("Error: n cannot be less than 1.")
+        return None
+    if num_sols is not None and num_sols < 1:
+        u.eprint("Error: The number of solutions cannot be less than 1.")
+        return None
+
+    world = World(n, k, m, full_map, pairs)
+    timer.start_timer(t)
+    world.process_map()
+    s = '{1:.4f}'.format(t, timer.end_timer(t))
+    data[t]['preprocessing_time'] = s
+    cars = [[world.get_garage()]] * n
+    packages = [False] * k
+    initial = State(world, cars, packages, 0)
+
+    if num_sols is None:
+        timer.start_timer(t)
+        sol, count = next(
+                local_beam_search(initial, is_goal, state_transition, h, kLimit))
+        data[t]['node_count'] = count
+        data[t]['cost_sum'] = sol.get_g()
+        s = '{1:.4f}'.format(t, timer.end_timer(t))
+        data[t]['simulation_time'] = s
+        # print(recreate_paths(sol))
+    else:
+        for i in range(num_sols):
+            sol, count = next(local_beam_search(initial, is_goal,
+                                                 state_transition, h, kLimit))
+            print("count=", count, "cost=", sol.get_g(), recreate_paths(sol))
+    """
 
 
 def a_star_any_graph(
@@ -140,7 +204,7 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
         random_graph, pairs = graphs.get_random_graph(k, m)
         pairs = u.filter_pairs(pairs)
         u.eprint("Starting problem " + str(i), flush=True)
-        a_star_any_graph(n, k, m, random_graph, pairs, h, data, t=i)
+        localbeam_any_graph(n, k, m, random_graph, pairs, h, data,20,t=i)
     
     return data
 
