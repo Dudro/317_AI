@@ -163,7 +163,7 @@ def a_star_any_graph(
     if num_sols is None: 
         timer.start_timer(t)
         sol, count = next(
-                a_star_count_nodes(initial, is_goal, state_transition, h))
+                a_star_count_nodes(initial, is_goal, state_transition, decorating_f(h)))
         data[t]['node_count'] = count
         data[t]['cost_sum'] = sol.get_g()
         s = '{1:.4f}'.format(t, timer.end_timer(t))
@@ -172,7 +172,7 @@ def a_star_any_graph(
     else:
         for i in range(num_sols):
             sol, count = next(a_star_count_nodes(initial, is_goal,
-                                                 state_transition, h))
+                                                 state_transition, decorating_f(h)))
             print("count=", count, "cost=", sol.get_g(), recreate_paths(sol))
     
 def astar_simulations(n, k, m, h, num_sims=100, output=None):
@@ -204,7 +204,7 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
         random_graph, pairs = graphs.get_random_graph(k, m)
         pairs = u.filter_pairs(pairs)
         u.eprint("Starting problem " + str(i), flush=True)
-        localbeam_any_graph(n, k, m, random_graph, pairs, h, data,20,t=i)
+        a_star_any_graph(n, k, m, random_graph, pairs, h, data,t=i)
     
     return data
 
