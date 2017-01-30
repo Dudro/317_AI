@@ -1,5 +1,5 @@
 from queue import PriorityQueue
-from math import floor
+from math import *
 
 
 def a_star(initial_state, is_goal, trans_op, f):
@@ -93,7 +93,7 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
                 if 0 < bound < 1:
                     num_to_keep = floor(tmp_queue.qsize() * bound)
                 else:
-                    num_to_keep = bound
+                    num_to_keep = min(bound, tmp_queue.qsize())
                 for i in range(num_to_keep):
                     queue.put(tmp_queue.get())
             else:
