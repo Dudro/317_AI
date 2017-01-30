@@ -1,4 +1,5 @@
 from queue import PriorityQueue
+from math import floor
 
 
 def a_star(initial_state, is_goal, trans_op, f):
@@ -42,8 +43,29 @@ def a_star(initial_state, is_goal, trans_op, f):
 def a_star_count_nodes(initial_state, is_goal, trans_op, f):
     """
     Like a_star but also counts the number of expanded nodes (number of nodes
-    pulled out of queue).
+    pulled out of the priority queue).
     :rtype: X, integral
+    """
+    for result in bounded_a_star(initial_state, is_goal, trans_op, f, bound=0):
+        yield result
+
+
+def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
+    """
+    Like a_star_count_nodes, but each time a state is expanded using the
+    transition operator, the successor states are sorted according to their
+    f-values, and only the best (i.e. lowest valued) 'bound' number of states
+    are placed back into the priority queue.
+    :param initial_state: see a_star
+    :param is_goal: see a_star
+    :param trans_op: see a_star
+    :param f: see a_star
+    :param bound: if a float between 0 (exclusive) and 1 (exclusive), then
+        interpreted as a percentage, and the best 'bound' %, rounded down of
+        the successors are kept; if an int that is 1 (inclusive) or greater,
+        then interpreted as the maximum number of successors to keep; if 0
+        (inclusive) or less, then keep all successors, like regular a_star.
+    :type bound: int or float
     """
     queue = PriorityQueue()
     counter = 0  # Needed to avoid priority queue trying to compare states.
@@ -53,20 +75,32 @@ def a_star_count_nodes(initial_state, is_goal, trans_op, f):
     while not queue.empty():
         _, _, next_state = queue.get()
         expanded += 1
-        #print("Next state cost: " + str(f(next_state)) + ", " +
+        # print("Next state cost: " + str(f(next_state)) + ", " +
         #      str(queue.qsize()), flush=True)
-        #print("Next state details: ", flush=True)
-        #print(next_state.get_car_locs(), flush=True)
-        #print(next_state.get_packages(), flush=True)
+        # print("Next state details: ", flush=True)
+        # print(next_state.get_car_locs(), flush=True)
+        # print(next_state.get_packages(), flush=True)
         if is_goal(next_state):
             # print("Yielding", flush=True)
             yield next_state, expanded
         else:
             successors = trans_op(next_state)
-            for successor in successors:
-                #print("Examining successor: ", flush=True)
-                #print(successor.get_car_locs(), flush=True)
-                #print(successor.get_packages(), flush=True)
-                queue.put((f(successor), counter, successor))
-                counter += 1
+            if bound > 0:
+                tmp_queue = PriorityQueue()
+                for successor in successors:
+                    tmp_queue.put((f(successor), counter, successor))
+                    counter += 1
+                if 0 < bound < 1:
+                    num_to_keep = floor(tmp_queue.qsize() * bound)
+                else:
+                    num_to_keep = bound
+                for i in range(num_to_keep):
+                    queue.put(tmp_queue.get())
+            else:
+                for successor in successors:
+                    # print("Examining successor: ", flush=True)
+                    # print(successor.get_car_locs(), flush=True)
+                    # print(successor.get_packages(), flush=True)
+                    queue.put((f(successor), counter, successor))
+                    counter += 1
     return None, expanded
