@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import random
 import math
 
+
 def draw_graph(graph, source_dest_pairs=None, garage=0):
     """
     Draw the given graph using Matplotlib.
@@ -17,28 +18,36 @@ def draw_graph(graph, source_dest_pairs=None, garage=0):
     :param garage: the garage node. Default: 0.
     :type garage: int
     """
+    # Always choose a circular layout for easy labeling. Draw the graph.
     layout = circular_layout(graph)
     nx.draw_networkx(graph, pos=layout, node_color='w')
+
+    # For each node, collect & plot all labels for it (src, dest, or garage).
     n_labels = dict((i, []) for i in graph.nodes())
     n_labels[garage].append('G ')
     if source_dest_pairs is not None:
+        # Collect all labels.
         i = 0
         for (src, dest) in source_dest_pairs:
             n_labels[src].append('s%d ' % i)
             n_labels[dest].append('d%d ' % i)
             i += 1
+        # Plot all labels close to the appropriate node.
         for i in graph.nodes():
             x, y = layout[i]
             label_parts = n_labels[i]
-            if label_parts:
+            if label_parts:  # If this node has labels.
                 label = ''.join(label_parts).strip()
                 y_scale = 1.20  # 1.20 seems to work well.
                 x_scale = 1.17 + 1.05 * len(label) / 100.0  # 1.17 works here.
                 plt.text(x * x_scale, y * y_scale, s=label, ha='center',
                          va='center')
+
+    # Plot the edges and their weights.
     e_labels = dict(((v1, v2), weight) for (v1, v2, weight) in
                     graph.edges(data='weight'))
     nx.draw_networkx_edge_labels(graph, pos=layout, edge_labels=e_labels)
+
 
 def get_triangle_graph():
     """
@@ -48,9 +57,7 @@ def get_triangle_graph():
     """
     triangle_size = 3
     triangle = nx.Graph()
-
-    for i in range(triangle_size):
-        triangle.add_node(i)
+    triangle.add_nodes_from([i for i in range(triangle_size)])
 
     triangle.add_edge(0, 1, weight=10)
     triangle.add_edge(0, 2, weight=30)
@@ -65,7 +72,7 @@ def get_triangle_graph():
     return triangle, pairs
 
 
-def get_og_graph():
+def get_ogg_graph():
     """
     Return ogg (the Original Gangster Graph) with source-destination pairs
     for testing.
@@ -73,7 +80,6 @@ def get_og_graph():
     """
     ogg_size = 9
     ogg = nx.Graph()
-
     ogg.add_nodes_from([i for i in range(ogg_size)])
 
     ogg.add_edge(0, 1, weight=20)
@@ -104,10 +110,9 @@ def get_circle_graph():
     source-destination pairs for testing.
     :rtype: Graph, list((int,int))
     """
-    size = 10
+    circle_size = 10
     circle = nx.Graph()
-    for i in range(size):
-        circle.add_node(i)
+    circle.add_nodes_from([i for i in range(circle_size)])
     circle.add_edge(0, 1, weight=5)
     circle.add_edge(1, 2, weight=5)
     circle.add_edge(2, 3, weight=5)
@@ -144,40 +149,44 @@ def get_circle_graph():
              (s6, d6), (s7, d7), (s8, d8), (s9, d9), (s10, d10)]
     return circle, pairs
 
+
 def get_random_graph(k, m, seed=None):
     """
-    :param n: The number of
-    :param k: The number of packages for the problem.
+    :param k: the number of packages for the problem
     :type k: int
-    :param m: The number of vertices to generate the graph with.
+    :param m: the number of vertices in the generated graph
     :type m: int
-    :param seed: A seed for the random problem generation.
+    :param seed: a seed for the random number generator
     :type seed: int
-    :return: a random ugly graph
+    :rtype: Graph, list([int, int])
     """
-    if seed != None:
+    if seed is not None:
         random.seed(seed)
+
+    # Generate the random graph.
     graph = nx.dense_gnm_random_graph(
-            m, 
-            random.randint(math.ceil(m*0.75), math.floor(m*1.25)), 
-            seed=seed)
+        m,
+        random.randint(math.ceil(m * 0.75), math.floor(m * 1.25)),
+        seed=seed)
+
+    # If the graph is not fully connected, connect each connected component.
     connected_components = nx.connected_components(graph)
     first_node = list(next(connected_components))[0]
     for list_of_nodes in connected_components:
-        graph.add_edge(first_node,list(list_of_nodes)[0])
+        graph.add_edge(first_node, list(list_of_nodes)[0])
+
+    # Add weights to the edges.
     edges = graph.edges()
     for edge in edges:
-        graph[edge[0]][edge[1]]['weight'] = random.randint(0,1000)
+        graph[edge[0]][edge[1]]['weight'] = random.randint(0, 1000)
+
+    # Generate random source-destination pairs for the packages.
     pairs = []
-    i = 0
-    while i < k:
-        s = random.randint(0, m-1)
-        d = random.randint(0, m-1)
-        while d == s :
-            d = random.randint(0, m-1)
-        #Potential bug: if k is much greater than m, we might try to generate unique pairs forever
-        pairs.append([s,d])
-        i = i + 1
+    for i in range(k):
+        s = random.randint(0, m - 1)
+        d = random.randint(0, m - 1)
+        while d == s:
+            d = random.randint(0, m - 1)
+        pairs.append([s, d])
 
     return graph, pairs
-

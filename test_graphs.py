@@ -1,21 +1,35 @@
 from graphs import *
 import matplotlib.pyplot as plt
 import networkx as nx
-import graphs
 from World import World
 
 
-def show_graph(graph, pairs):
-    draw_graph(graph, pairs)
+def show_graph(graph, pairs=None, garage=0):
+    """
+    Draws the given graph using graphs.draw_graph, and then shows the
+    Matplotlib plot.
+    :param graph: the graph to draw
+    :type graph: NetworkX graph
+    :param pairs: source-destination pairs. Default: None.
+    :type pairs: list((int, int))
+    :param garage: the garage node. Default: 0.
+    :type garage: int
+    """
+    draw_graph(graph, pairs, garage)
     plt.show()
 
 
 def test_graphs():
-    graph, pairs = graphs.get_triangle_graph()
+    """
+    Tests the hardcoded graphs in graphs.py, making sure they are constructed
+    as expected.
+    """
+    # Test the triangle graph.
+    graph, pairs = get_triangle_graph()
+    show_graph(graph, pairs)
     N = 1
     K = len(pairs)
     M = len(graph.nodes())
-    # show_graph(graph, pairs)
 
     world = World(N, K, M, graph, pairs)
     print("Original map:")
@@ -37,13 +51,13 @@ def test_graphs():
         print("error")
     print("Reduced map:")
     print(nx.to_dict_of_dicts(world.get_reduced_map()))
-    # show_graph(world.get_reduced_map(), pairs)
 
-    graph, pairs = graphs.get_og_graph()
+    # Test the OGG graph.
+    graph, pairs = get_ogg_graph()
+    show_graph(graph, pairs)
     N = 3
     K = len(pairs)
     M = len(graph.nodes())
-    show_graph(graph, pairs)
 
     world = World(N, K, M, graph, pairs)
     print("Original map:")
@@ -65,13 +79,13 @@ def test_graphs():
         print("error")
     print("Reduced map:")
     print(nx.to_dict_of_dicts(world.get_reduced_map()))
-    # show_graph(world.get_reduced_map(), pairs)
 
-    graph, pairs = graphs.get_circle_graph()
+    # Test the circle graph.
+    graph, pairs = get_circle_graph()
+    show_graph(graph, pairs)
     N = 2
     K = len(pairs)
     M = len(graph.nodes())
-    # show_graph(graph, pairs)
 
     world = World(N, K, M, graph, pairs)
     print("Original map:")
@@ -99,11 +113,10 @@ def test_graphs():
         print("error")
     print("Reduced map:")
     print(nx.to_dict_of_dicts(world.get_reduced_map()))
-    # show_graph(world.get_reduced_map(), pairs)
 
-    graph, pairs = get_random_graph(3,10,5)
+    # Test one random graph.
+    graph, pairs = get_random_graph(3, 10, seed=5)
     show_graph(graph, pairs)
 
+
 test_graphs()
-
-
