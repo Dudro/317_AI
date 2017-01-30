@@ -152,3 +152,12 @@ for (sol, count) in bounded_a_star(GraphState(2, 0, [2]), at_bucharest,
     print(count, sol.get_cost_so_far(), sol.get_path_so_far())
 for i in range(romania.number_of_nodes()):  # Reset visited attribute.
     romania.node[i]['visited'] = False
+
+# Generate (lazily) every solution (path) from Arad to Bucharest, with the
+# optimal (shortest) path being part of the first solution. WITH BOUNDED.
+print("Bounded A* with number bound larger than needed.")
+for (sol, count) in bounded_a_star(GraphState(2, 0, [2]), at_bucharest,
+                                   trans_op, f, bound=14):
+    print(count, sol.get_cost_so_far(), sol.get_path_so_far())
+for i in range(romania.number_of_nodes()):  # Reset visited attribute.
+    romania.node[i]['visited'] = False
