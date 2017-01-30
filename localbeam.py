@@ -1,7 +1,8 @@
 from queue import PriorityQueue
 from State import *
 import sys
-def local_beam_search(state,is_goal,trans_op,f,k):
+global_counter = 0
+def local_beam_search(state,is_goal,trans_op,f,k=20):
     """
       :param k: a number of states are being considered
       :type k: Integer
@@ -19,9 +20,11 @@ def local_beam_search(state,is_goal,trans_op,f,k):
         #apply local_beam_search on each of the state in potential[]
    #if is_goal(state) is true then return state as a goal_state
    """
+    global global_counter
+    global_counter += 1
     if is_goal(state):
         goal_state = state
-        yield goal_state,1
+        yield goal_state, global_counter
     else:
         #may add a counter here to count how many nodes that we have explored
 
@@ -35,10 +38,16 @@ def local_beam_search(state,is_goal,trans_op,f,k):
             mem_cost = f(mem)
             # question : Should we check for duplicates or not
             if not potentialTemp.empty():
-                if mem_cost not in potentialTemp.queue[0]:
+                found = False
+                for tup in potentialTemp.queue:
+                    if tup[0] == mem_cost:
+                        found = True
+                        break
+                if not found:
                     potentialTemp.put((mem_cost,mem))
             else:
                 potentialTemp.put((mem_cost, mem))
+
             if k >= len(potentialTemp.queue):
                 potential = potentialTemp.queue
             else:
@@ -51,7 +60,7 @@ def local_beam_search(state,is_goal,trans_op,f,k):
 
         for mem in potential:
             for sol,exp in local_beam_search(mem[1],is_goal,trans_op,f,k):
-                yield sol,exp+1
+                yield sol,global_counter
           
         
             

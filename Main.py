@@ -62,7 +62,7 @@ def localbeam_any_graph(
     :param num_sols:
     :param t:
     :return:
-
+    """
     if k != len(pairs):
         u.eprint("Error: k is not equal to the length of src-dest pairs.")
         return None
@@ -88,7 +88,7 @@ def localbeam_any_graph(
     if num_sols is None:
         timer.start_timer(t)
         sol, count = next(
-                local_beam_search(initial, is_goal, state_transition, h, kLimit))
+                local_beam_search(initial, is_goal, state_transition, decorating_f(h), kLimit))
         data[t]['node_count'] = count
         data[t]['cost_sum'] = sol.get_g()
         s = '{1:.4f}'.format(t, timer.end_timer(t))
@@ -97,9 +97,9 @@ def localbeam_any_graph(
     else:
         for i in range(num_sols):
             sol, count = next(local_beam_search(initial, is_goal,
-                                                 state_transition, h, kLimit))
+                                                 state_transition, decorating_f(h), kLimit))
             print("count=", count, "cost=", sol.get_g(), recreate_paths(sol))
-    """
+
 
 
 def a_star_any_graph(
@@ -174,6 +174,9 @@ def a_star_any_graph(
             sol, count = next(a_star_count_nodes(initial, is_goal,
                                                  state_transition, decorating_f(h)))
             print("count=", count, "cost=", sol.get_g(), recreate_paths(sol))
+
+
+
     
 def astar_simulations(n, k, m, h, num_sims=100, output=None):
     """
@@ -201,11 +204,45 @@ def astar_simulations(n, k, m, h, num_sims=100, output=None):
     data = [{} for i in range(num_sims)]
     # Begin running the simulations
     for i in range(num_sims):
-        random_graph, pairs = graphs.get_random_graph(k, m)
+        random_graph, pairs = graphs.get_random_graph(k, m,i)
         pairs = u.filter_pairs(pairs)
         u.eprint("Starting problem " + str(i), flush=True)
         a_star_any_graph(n, k, m, random_graph, pairs, h, data,t=i)
-    
+    return data
+
+
+def localbeam_simulations(n, k, m, h, num_sims=100, output=None):
+    """
+    :param n: The number of cars in this problem.
+    :type n: int
+    :param k: The number of packages in this problem.
+    :type k: int
+    :param m: The number of vertices in the graph for this problem.
+    :type m: int
+    :param h: The heurisitic function that A* will use.
+    :type h: function
+    :param num_sims: The number of graphs to generate, and the number of times
+        the simulation will run.
+    :type num_sims: int
+    :param output: The name of a file to which output cdata_localbeaman be redirected.
+    :type output: String
+    Run A* with a specified heuristic on many different problems.  The number
+    of times to run the simulation depends on the input 'num_sims'.  The method
+    'get_random_graph' will generate a new random problem according to the
+    parameters n, k, and m for as many simulation as specified.  Output from
+    A* will be redirected to a file if provided.
+    """
+
+    # Initialize dictionaries for data collection
+    data = [{} for i in range(num_sims)]
+    # Begin running the simulations
+    for i in range(num_sims):
+        random_graph, pairs = graphs.get_random_graph(k, m,i)
+        pairs = u.filter_pairs(pairs)
+        u.eprint("Starting problem " + str(i), flush=True)
+        global global_counter
+        global_counter = 0
+        localbeam_any_graph(n, k, m, random_graph, pairs, h, data,20, t=i)
     return data
 
 
@@ -271,10 +308,18 @@ if __name__ == "__main__":
             m, 
             h, 
             num_sims=sims)
-    
+
+    data_localbeam = localbeam_simulations(
+            n,
+            k,
+            m,
+            h,
+            num_sims=sims)
     name = "n"+str(n)+".k"+str(k)+".m"+str(m)+"."+h_name
     
-    dump_json_data(name, data)
+    dump_json_data(name+"astar", data)
+    plot_results(name+"astar", data)
 
-    plot_results(name, data)
+    dump_json_data(name+"localbeam", data_localbeam)
+    plot_results(name+"localbeam", data_localbeam)
 
