@@ -61,6 +61,7 @@ def filter_pairs(pairs):
     """
     Returns a list of every source-destination pair in 'pairs' where the source
     is not the same as the destination.
+
     :param pairs: a list of source-destination pairs for packages
     :type pairs: list((int, int))
     :rtype: list((int, int))
@@ -83,6 +84,7 @@ def eprint(*args, **kwargs):
 def output_plot(path, data):
     """
     Writes plots of the given data in the file corresponding to the given path.
+
     :param path: the file path
     :param data: the data to plot
     """
@@ -109,7 +111,7 @@ def output_plot(path, data):
             #         to_plot.append(go.Scatter(plot_data[k]))
 
     cost = go.Scatter(plot_data["cost_sum"])
-    preprocessing = go.Scatter(plot_data["preprocessing_time"])
+    pre_processing = go.Scatter(plot_data["pre_processing_time"])
     simulation = go.Scatter(plot_data["simulation_time"])
     nodes = go.Scatter(plot_data["node_count"])
 
@@ -117,12 +119,36 @@ def output_plot(path, data):
                                   specs=[[{'colspan': 2}, None], [{}, {}],
                                          [{'colspan': 2}, None]],
                                   subplot_titles=(
-                                      'Total Path Cost', 'Preprocessing Time',
+                                      'Total Path Cost', 'Pre-processing Time',
                                       'Simulation Time',
                                       'Total Nodes Expanded'))
     to_plot.append_trace(cost, 1, 1)
-    to_plot.append_trace(preprocessing, 2, 1)
+    to_plot.append_trace(pre_processing, 2, 1)
     to_plot.append_trace(simulation, 2, 2)
     to_plot.append_trace(nodes, 3, 1)
 
     py.plot(to_plot, filename=path, auto_open=False)
+
+
+def dump_json_data(name, data):
+    """
+    Writes the given data to the given file in JSON.
+
+    :param name: the name of the file (".json" will be added as an extension)
+    :param data: the data to write
+    """
+    import json
+    file_name = name + ".json"
+    with open(file_name, 'w+') as out:
+        json.dump(data, out, indent=4)
+
+
+def plot_results(name, data):
+    """
+    Writes plots of the given data to the given file in HTML.
+
+    :param name: the name of the file (".html" will be added as an extension)
+    :param data: the data to write
+    """
+    plot_name = name + ".html"
+    output_plot(plot_name, data)

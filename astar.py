@@ -21,7 +21,7 @@ def a_star(initial_state, is_goal, trans_op, f):
     initial state.
 
     :param initial_state: the initial state of the problem
-    :type initial_state: X, where X is the argument type of is_goal, trans_op
+    :type initial_state: X, where X is the argument type of is_goal, trans_op,
         and f
     :param is_goal: a function that takes a state, x, of type X, and
         returns a boolean indicating whether x is a goal state

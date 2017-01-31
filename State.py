@@ -1,6 +1,6 @@
-import copy
 from World import World
-from utils import *
+from utils import combinations, permutations_exclude
+import copy
 
 
 class State:
@@ -259,3 +259,45 @@ def is_goal(state):
         if state.get_car_loc(car) != state.get_world().get_garage():
             return False
     return state.all_packages_delivered()
+
+
+def decorating_f(h):
+    """
+    Returns a function that takes a State, x, and returns f(x) = g(x) + h(x).
+    The given parameter should be the function h.
+    :param h: the heuristic function
+    :rtype: State => float
+    """
+
+    def true_f(state):
+        return state.get_g() + h(state)
+
+    return true_f
+
+
+def recreate_paths(state):
+    """
+    Returns a list of paths, one for each car, that traces the car's path in
+    the original map from the initial state (where each car is in the garage)
+    to the given state.
+    :param state: the state for which to recreate the car paths
+    :rtype: list(list(int))
+    """
+    all_paths = []
+    world = state.get_world()
+    for car_stack in state.get_car_locs():
+        if len(car_stack) == 1:  # Car is still at garage
+            this_path = [car_stack.pop()]
+        else:
+            loc = car_stack.pop()
+            this_path = []
+            while car_stack:  # Means "while car_stack is not empty"
+                prev = car_stack.pop()
+                if prev != loc:
+                    if this_path:  # Means "if this_path is not empty"
+                        this_path.pop()  # Remove last item; it's duplicated.
+                    this_path.extend(world.get_shortest_path(loc, prev))
+                loc = prev
+            this_path.reverse()
+        all_paths.append(this_path)
+    return all_paths
