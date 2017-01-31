@@ -54,6 +54,9 @@ class World:
     def get_garage(self):
         return self._G
 
+    def get_number_of_cars(self):
+        return self._N
+
     def get_important_vertices(self):
         if self._important_vertices is None:
             important = []
