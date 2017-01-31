@@ -33,7 +33,6 @@ def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
 
 def _local_beam_search_helper(counter, state, is_goal, trans_op, f, k_limit):
     counter += 1
-    print ("Recursive call #", counter)
     if is_goal(state):
         goal_state = state
         yield goal_state, counter
