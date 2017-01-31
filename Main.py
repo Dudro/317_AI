@@ -72,13 +72,20 @@ if __name__ == "__main__":
         else:
             usage(sys.argv[0], "Invalid heuristic argument.")
 
-    # Run the simulations.
-    data_a_star = a_star_simulations(n, k, m, h, num_sims)
-    data_local_beam = local_beam_simulations(n, k, m, h, num_sims, k_limit=20)
-
-    # Record the simulation results to file.
+    # Run the simulations and record simulation results.
     name = "n" + str(n) + ".k" + str(k) + ".m" + str(m) + "." + h_name + "."
+
+    # Regular A*.
+    data_a_star = a_star_simulations(n, k, m, h, num_sims)
     utils.dump_json_data(name + "a_star", data_a_star)
     utils.plot_results(name + "a_star", data_a_star)
+
+    # Bounded A*.
+    data_bounded_a_star = bounded_a_star_simulations(n, k, m, h, num_sims, 0.3)
+    utils.dump_json_data(name + "bounded_a_star", data_bounded_a_star)
+    utils.plot_results(name + "bounded_a_star", data_bounded_a_star)
+
+    # Local Beam Search.
+    data_local_beam = local_beam_simulations(n, k, m, h, num_sims, k_limit=20)
     utils.dump_json_data(name + "local_beam", data_local_beam)
     utils.plot_results(name + "local_beam", data_local_beam)

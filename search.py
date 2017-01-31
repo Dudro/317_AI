@@ -38,6 +38,46 @@ def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=1):
                        a_star_count_nodes)
 
 
+def bounded_a_star_any_graph(n, k, m, full_map, pairs, h, bound, num_sols=1):
+    """
+    Runs Bounded A* with the specified heuristic on the given problem. The
+    problem definition involves n, k, m, a map, and source-destination pairs.
+    Returns a dictionary of search results. Although, the number of solutions
+    to generate can be specified, and some search results will be returned
+    regardless, most search results are only given if the number of solutions
+    to generate is 1.
+
+    :param n: the number of cars in this problem
+    :type n: int
+    :param k: the number of packages in this problem
+    :type k: int
+    :param m: the number of vertices in the full map for this problem
+    :type m: int
+    :param full_map: the full map of all locations for the problem. It could be
+        generated randomly or predefined.
+    :type full_map: NetworkX Graph
+    :param pairs: a list of source-destination pairs of all the packages in the
+        problem. Each source and each destination must correspond to a location
+        in the full map.
+    :type pairs: list((int, int))
+    :param h: the heuristic function that Bounded A* will use
+    :type h: State => float
+    :param bound: if a float between 0 (exclusive) and 1 (exclusive), then
+        interpreted as a percentage, and the best 'bound' %, rounded up of
+        the successors are kept; if an int that is 1 (inclusive) or greater,
+        then interpreted as the maximum number of successors to keep; if 0
+        (inclusive) or less, then keep all successors, like regular a_star.
+    :type bound: int or float
+    :param num_sols: the number of solutions that should be generated, or -1 if
+        all possible solutions should be generated. Default: 1.
+    :type num_sols: int
+    :rtype: dict
+    """
+    from astar import bounded_a_star
+    return _run_search(n, k, m, full_map, pairs, num_sols, h, bounded_a_star,
+                       bound)
+
+
 def local_beam_any_graph(n, k, m, full_map, pairs, h, k_limit, num_sols=1):
     """
     Runs Local Beam Search with the specified heuristic on the given problem.

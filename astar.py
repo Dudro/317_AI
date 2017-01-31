@@ -60,7 +60,7 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
     :param trans_op: see a_star
     :param f: see a_star
     :param bound: if a float between 0 (exclusive) and 1 (exclusive), then
-        interpreted as a percentage, and the best 'bound' %, rounded down of
+        interpreted as a percentage, and the best 'bound' %, rounded up of
         the successors are kept; if an int that is 1 (inclusive) or greater,
         then interpreted as the maximum number of successors to keep; if 0
         (inclusive) or less, then keep all successors, like regular a_star.
@@ -75,7 +75,7 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
         _, _, next_state = queue.get()
         expanded += 1
         # print("Next state cost: " + str(f(next_state)) + ", " +
-        #      str(queue.qsize()), flush=True)
+        #       str(queue.qsize()), flush=True)
         # print("Next state details: ", flush=True)
         # print(next_state.get_car_locs(), flush=True)
         # print(next_state.get_packages(), flush=True)
@@ -90,7 +90,7 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
                     tmp_queue.put((f(successor), counter, successor))
                     counter += 1
                 if 0 < bound < 1:
-                    num_to_keep = floor(tmp_queue.qsize() * bound)
+                    num_to_keep = max(1, ceil(tmp_queue.qsize() * bound))
                 else:
                     num_to_keep = min(bound, tmp_queue.qsize())
                 for _ in range(num_to_keep):
