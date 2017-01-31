@@ -46,8 +46,7 @@ def a_star_count_nodes(initial_state, is_goal, trans_op, f):
     pulled out of the priority queue).
     :rtype: X, integral
     """
-    for result in bounded_a_star(initial_state, is_goal, trans_op, f, bound=0):
-        yield result
+    return bounded_a_star(initial_state, is_goal, trans_op, f, bound=0)
 
 
 def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
@@ -103,4 +102,3 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
                     # print(successor.get_packages(), flush=True)
                     queue.put((f(successor), counter, successor))
                     counter += 1
-    return None, expanded
