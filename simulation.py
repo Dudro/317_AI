@@ -106,14 +106,13 @@ def _run_simulations(n, k, m, h, num_sims, search_alg, *args, **kwargs):
     :rtype: list(dict)
     """
     from graphs import get_random_graph
-    from utils import eprint
     import utils
 
     data = []  # List of dictionaries (eventually) for data collection.
     for i in range(num_sims):  # Run the simulations.
         random_graph, pairs = get_random_graph(k, m, i)
         pairs = utils.filter_pairs(pairs)
-        eprint("Starting problem", i, flush=True)
+        print("Starting problem", i, flush=True)
         data.append(search_alg(n, k, m, random_graph, pairs, h, *args,
                                **kwargs))
     return data
