@@ -1,24 +1,34 @@
 from queue import PriorityQueue
-from State import *
-import sys
+
 global_counter = 0
-def local_beam_search(state,is_goal,trans_op,f,k=20):
+
+
+def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
     """
-      :param k: a number of states are being considered
-      :type k: Integer
-      :param state: a current state
-      :type state: State which is defined by car_locs[],packages[],cost_so_far
-      :return: goal_state
-      :type: State
-      :param f: a total cost - compute f(state)= g(state) + h(state)
-    #if is_goal(state) is false       
-        #apply state_transition function to state which would return a list of successor as candidate[]
-        #generate a priority queue called potential[]
-        #find the minimum cost from all possibilities return by state_transition
-        #state with minimum cost has the highest priority in the queue; append this to potential[];pop it out of candidate[]
-        #choose (k-1) states from candidate and append them to potential[]
-        #apply local_beam_search on each of the state in potential[]
-   #if is_goal(state) is true then return state as a goal_state
+    if is_goal(state) then
+        return state as a goal state
+    else
+        candidates = trans_op(state)
+        choose (k-1) states, x, from candidates with the lowest f(x) values
+        recursively apply local_beam_search on each of those states
+
+    :param state: a current state
+    :type state: X, where X is the argument type of is_goal, trans_op, and f
+    :param is_goal: a function that takes a state, x, of type X, and
+        returns a boolean indicating whether x is a goal state
+    :type is_goal: X => bool, where X is any state type
+    :param trans_op: a function that takes a state, x, of type X, and
+        returns a iterable over type X containing all successor states of x
+    :type trans_op: X => list(X), where X is any state type
+    :param f: a function that takes a state, x, of type X, and computes
+        f(x) = g(x) + h(x), where g(x) is the cost so far from the initial
+        state to x, and h(x) is the estimated remaining cost from x to a
+        goal state
+    :type f: X => float, where X is any state type
+    :param k_limit: the number of successor states that will being considered
+        minus 1. Default: 20.
+    :type k_limit: int
+    :type: State
    """
     global global_counter
     global_counter += 1
@@ -26,32 +36,29 @@ def local_beam_search(state,is_goal,trans_op,f,k=20):
         goal_state = state
         yield goal_state, global_counter
     else:
-        #may add a counter here to count how many nodes that we have explored
+        # may add a counter here to count how many nodes that we have explored
 
-        potentialTemp = PriorityQueue()
+        potential_temp = PriorityQueue()
         potential = []
         candidate = trans_op(state)
-        cost = []
-        min_cost = sys.maxsize
-        min_cost_mem = None
         for mem in candidate:
             mem_cost = f(mem)
             # question : Should we check for duplicates or not
-            if not potentialTemp.empty():
+            if not potential_temp.empty():
                 found = False
-                for tup in potentialTemp.queue:
+                for tup in potential_temp.queue:
                     if tup[0] == mem_cost:
                         found = True
                         break
                 if not found:
-                    potentialTemp.put((mem_cost,mem))
+                    potential_temp.put((mem_cost, mem))
             else:
-                potentialTemp.put((mem_cost, mem))
+                potential_temp.put((mem_cost, mem))
 
-            if k >= len(potentialTemp.queue):
-                potential = potentialTemp.queue
+            if k_limit >= len(potential_temp.queue):
+                potential = potential_temp.queue
             else:
-                potential = potentialTemp.queue[0:k]
+                potential = potential_temp.queue[0:k_limit]
         # for mem in candidate:
         #     if mem.get_g() == min(cost) and potential.empty():
         #         potential.put(mem)
@@ -59,8 +66,6 @@ def local_beam_search(state,is_goal,trans_op,f,k=20):
         #     elif mem state_w_min
 
         for mem in potential:
-            for sol,exp in local_beam_search(mem[1],is_goal,trans_op,f,k):
-                yield sol,global_counter
-          
-        
-            
+            for sol, exp in local_beam_search(mem[1], is_goal, trans_op, f,
+                                              k_limit):
+                yield sol, global_counter
