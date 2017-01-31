@@ -119,4 +119,5 @@ def test_graphs():
     show_graph(graph, pairs)
 
 
-test_graphs()
+if __name__ == "__main__":
+    test_graphs()

@@ -31,14 +31,15 @@ def test_perm_exclude(n, r, exclude=None):
         print(perm)
 
 
-test_perm(2, 1)
-test_perm(3, 2)
-test_perm_list([3, 2, 1, 4, 0], 3)
-test_comb(2, 1)
-test_comb(3, 2)
-test_comb_list([3, 2, 1, 4, 0], 3)
-test_perm_exclude(2, 1)
-test_perm_exclude(3, 2)
-test_perm_exclude(5, 3, [False, False, True, True, False])
-test_perm_list([0, 1, 4], 3)  # So perm_exclude and perm_list are equivalent.
-eprint(filter_pairs([(1, 2), (4, 3), (5, 5), (-1, 1)]))
+if __name__ == "__main__":
+    test_perm(2, 1)
+    test_perm(3, 2)
+    test_perm_list([3, 2, 1, 4, 0], 3)
+    test_comb(2, 1)
+    test_comb(3, 2)
+    test_comb_list([3, 2, 1, 4, 0], 3)
+    test_perm_exclude(2, 1)
+    test_perm_exclude(3, 2)
+    test_perm_exclude(5, 3, [False, False, True, True, False])
+    test_perm_list([0, 1, 4], 3)  # So perm_exclude & perm_list are equivalent.
+    eprint(filter_pairs([(1, 2), (4, 3), (5, 5), (-1, 1)]))

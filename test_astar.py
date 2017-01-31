@@ -118,46 +118,47 @@ def f(state):  # Specific to romania. Calculates f(x) = g(x) + h(x) for A*.
            straight_line_distance_bucharest[state.get_vertex()]
 
 
-# Generate (lazily) every solution (path) from Arad to Bucharest, with the
-# optimal (shortest) path being part of the first solution.
-print("Basic A*.")
-for solution in a_star(GraphState(2, 0, [2]), at_bucharest, trans_op, f):
-    print(solution.get_cost_so_far(), solution.get_path_so_far())
-for i in range(romania.number_of_nodes()):  # Reset visited attribute.
-    romania.node[i]['visited'] = False
+if __name__ == "__main__":
+    # Generate (lazily) every solution (path) from Arad to Bucharest, with the
+    # optimal (shortest) path being part of the first solution.
+    print("Basic A*.")
+    for solution in a_star(GraphState(2, 0, [2]), at_bucharest, trans_op, f):
+        print(solution.get_cost_so_far(), solution.get_path_so_far())
+    for i in range(romania.number_of_nodes()):  # Reset visited attribute.
+        romania.node[i]['visited'] = False
 
-# Generate (lazily) every solution (path) from Arad to Bucharest, with the
-# optimal (shortest) path being part of the first solution. WITH COUNT.
-print("A* with count.")
-for (sol, count) in a_star_count_nodes(GraphState(2, 0, [2]), at_bucharest,
-                                       trans_op, f):
-    print(count, sol.get_cost_so_far(), sol.get_path_so_far())
-for i in range(romania.number_of_nodes()):  # Reset visited attribute.
-    romania.node[i]['visited'] = False
+    # Generate (lazily) every solution (path) from Arad to Bucharest, with the
+    # optimal (shortest) path being part of the first solution. WITH COUNT.
+    print("A* with count.")
+    for (sol, count) in a_star_count_nodes(GraphState(2, 0, [2]), at_bucharest,
+                                           trans_op, f):
+        print(count, sol.get_cost_so_far(), sol.get_path_so_far())
+    for i in range(romania.number_of_nodes()):  # Reset visited attribute.
+        romania.node[i]['visited'] = False
 
-# Generate (lazily) every solution (path) from Arad to Bucharest, with the
-# optimal (shortest) path being part of the first solution. WITH BOUNDED.
-print("Bounded A* with percentage bound.")
-for (sol, count) in bounded_a_star(GraphState(2, 0, [2]), at_bucharest,
-                                   trans_op, f, bound=0.5):
-    print(count, sol.get_cost_so_far(), sol.get_path_so_far())
-for i in range(romania.number_of_nodes()):  # Reset visited attribute.
-    romania.node[i]['visited'] = False
+    # Generate (lazily) every solution (path) from Arad to Bucharest, with the
+    # optimal (shortest) path being part of the first solution. WITH BOUNDED.
+    print("Bounded A* with percentage bound.")
+    for (sol, count) in bounded_a_star(GraphState(2, 0, [2]), at_bucharest,
+                                       trans_op, f, bound=0.5):
+        print(count, sol.get_cost_so_far(), sol.get_path_so_far())
+    for i in range(romania.number_of_nodes()):  # Reset visited attribute.
+        romania.node[i]['visited'] = False
 
-# Generate (lazily) every solution (path) from Arad to Bucharest, with the
-# optimal (shortest) path being part of the first solution. WITH BOUNDED.
-print("Bounded A* with number bound.")
-for (sol, count) in bounded_a_star(GraphState(2, 0, [2]), at_bucharest,
-                                   trans_op, f, bound=1):
-    print(count, sol.get_cost_so_far(), sol.get_path_so_far())
-for i in range(romania.number_of_nodes()):  # Reset visited attribute.
-    romania.node[i]['visited'] = False
+    # Generate (lazily) every solution (path) from Arad to Bucharest, with the
+    # optimal (shortest) path being part of the first solution. WITH BOUNDED.
+    print("Bounded A* with number bound.")
+    for (sol, count) in bounded_a_star(GraphState(2, 0, [2]), at_bucharest,
+                                       trans_op, f, bound=1):
+        print(count, sol.get_cost_so_far(), sol.get_path_so_far())
+    for i in range(romania.number_of_nodes()):  # Reset visited attribute.
+        romania.node[i]['visited'] = False
 
-# Generate (lazily) every solution (path) from Arad to Bucharest, with the
-# optimal (shortest) path being part of the first solution. WITH BOUNDED.
-print("Bounded A* with number bound larger than needed.")
-for (sol, count) in bounded_a_star(GraphState(2, 0, [2]), at_bucharest,
-                                   trans_op, f, bound=14):
-    print(count, sol.get_cost_so_far(), sol.get_path_so_far())
-for i in range(romania.number_of_nodes()):  # Reset visited attribute.
-    romania.node[i]['visited'] = False
+    # Generate (lazily) every solution (path) from Arad to Bucharest, with the
+    # optimal (shortest) path being part of the first solution. WITH BOUNDED.
+    print("Bounded A* with number bound larger than needed.")
+    for (sol, count) in bounded_a_star(GraphState(2, 0, [2]), at_bucharest,
+                                       trans_op, f, bound=14):
+        print(count, sol.get_cost_so_far(), sol.get_path_so_far())
+    for i in range(romania.number_of_nodes()):  # Reset visited attribute.
+        romania.node[i]['visited'] = False
