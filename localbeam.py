@@ -1,7 +1,5 @@
 from queue import PriorityQueue
 
-global_counter = 0
-
 
 def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
     """
@@ -29,12 +27,15 @@ def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
         minus 1. Default: 20.
     :type k_limit: int
     :type: State
-   """
-    global global_counter
-    global_counter += 1
+    """
+    return _local_beam_search_helper(0, state, is_goal, trans_op, f, k_limit)
+
+
+def _local_beam_search_helper(counter, state, is_goal, trans_op, f, k_limit):
+    counter += 1
     if is_goal(state):
         goal_state = state
-        yield goal_state, global_counter
+        yield goal_state, counter
     else:
         # may add a counter here to count how many nodes that we have explored
 
@@ -66,6 +67,7 @@ def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
         #     elif mem state_w_min
 
         for mem in potential:
-            for sol, exp in local_beam_search(mem[1], is_goal, trans_op, f,
-                                              k_limit):
-                yield sol, global_counter
+            for sol, exp in _local_beam_search_helper(counter, mem[1], is_goal,
+                                                      trans_op, f, k_limit):
+                counter += exp
+                yield sol, counter
