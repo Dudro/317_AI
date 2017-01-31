@@ -67,7 +67,7 @@ def _local_beam_search_helper(counter, state, is_goal, trans_op, f, k_limit):
         #     elif mem state_w_min
 
         for mem in potential:
-            for sol, exp in _local_beam_search_helper(counter, mem[1], is_goal,
+            for sol, exp in _local_beam_search_helper(0, mem[1], is_goal,
                                                       trans_op, f, k_limit):
                 counter += exp
                 yield sol, counter
