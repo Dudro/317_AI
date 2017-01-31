@@ -27,11 +27,11 @@ def test_graphs():
     # Test the triangle graph.
     graph, pairs = get_triangle_graph()
     show_graph(graph, pairs)
-    N = 1
-    K = len(pairs)
-    M = len(graph.nodes())
+    n = 1
+    k = len(pairs)
+    m = len(graph.nodes())
 
-    world = World(N, K, M, graph, pairs)
+    world = World(n, k, m, graph, pairs)
     print("Original map:")
     print(nx.to_dict_of_dicts(graph))
     print("Important vertices:")
@@ -55,11 +55,11 @@ def test_graphs():
     # Test the OGG graph.
     graph, pairs = get_ogg_graph()
     show_graph(graph, pairs)
-    N = 3
-    K = len(pairs)
-    M = len(graph.nodes())
+    n = 3
+    k = len(pairs)
+    m = len(graph.nodes())
 
-    world = World(N, K, M, graph, pairs)
+    world = World(n, k, m, graph, pairs)
     print("Original map:")
     print(nx.to_dict_of_dicts(graph))
     print("Important vertices: ")
@@ -83,11 +83,11 @@ def test_graphs():
     # Test the circle graph.
     graph, pairs = get_circle_graph()
     show_graph(graph, pairs)
-    N = 2
-    K = len(pairs)
-    M = len(graph.nodes())
+    n = 2
+    k = len(pairs)
+    m = len(graph.nodes())
 
-    world = World(N, K, M, graph, pairs)
+    world = World(n, k, m, graph, pairs)
     print("Original map:")
     print(nx.to_dict_of_dicts(graph))
     print("Important vertices:")

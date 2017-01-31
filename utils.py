@@ -65,7 +65,7 @@ def filter_pairs(pairs):
     :type pairs: list((int, int))
     :rtype: list((int, int))
     """
-    return [(src, dest) for (src, dest) in pairs if src != dest]
+    return [(src, dest) for src, dest in pairs if src != dest]
 
 
 def eprint(*args, **kwargs):

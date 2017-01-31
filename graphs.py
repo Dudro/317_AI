@@ -27,11 +27,9 @@ def draw_graph(graph, source_dest_pairs=None, garage=0):
     n_labels[garage].append('G ')
     if source_dest_pairs is not None:
         # Collect all labels.
-        i = 0
-        for (src, dest) in source_dest_pairs:
+        for i, (src, dest) in enumerate(source_dest_pairs):
             n_labels[src].append('s%d ' % i)
             n_labels[dest].append('d%d ' % i)
-            i += 1
         # Plot all labels close to the appropriate node.
         for i in graph.nodes():
             x, y = layout[i]
@@ -44,7 +42,7 @@ def draw_graph(graph, source_dest_pairs=None, garage=0):
                          va='center')
 
     # Plot the edges and their weights.
-    e_labels = dict(((v1, v2), weight) for (v1, v2, weight) in
+    e_labels = dict(((v1, v2), weight) for v1, v2, weight in
                     graph.edges(data='weight'))
     nx.draw_networkx_edge_labels(graph, pos=layout, edge_labels=e_labels)
 
@@ -158,7 +156,7 @@ def get_random_graph(k, m, seed=None):
     :type m: int
     :param seed: a seed for the random number generator
     :type seed: int
-    :rtype: Graph, list([int, int])
+    :rtype: Graph, list((int, int))
     """
     if seed is not None:
         random.seed(seed)
@@ -181,12 +179,17 @@ def get_random_graph(k, m, seed=None):
         graph[edge[0]][edge[1]]['weight'] = random.randint(0, 1000)
 
     # Generate random source-destination pairs for the packages.
-    pairs = []
-    for i in range(k):
-        s = random.randint(0, m - 1)
-        d = random.randint(0, m - 1)
-        while d == s:
-            d = random.randint(0, m - 1)
-        pairs.append([s, d])
+    pairs = generate_random_package_routes(k, m)
 
     return graph, pairs
+
+
+def generate_random_package_routes(k, m):
+        pairs = []
+        for _ in range(k):
+            src = random.randint(0, m - 1)
+            dest = src
+            while dest == src:
+                dest = random.randint(0, m - 1)
+            pairs.append((src, dest))
+        return pairs

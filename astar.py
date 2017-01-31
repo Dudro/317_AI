@@ -36,7 +36,7 @@ def a_star(initial_state, is_goal, trans_op, f):
     :type f: X => float, where X is any state type
     :rtype: X (returns a goal state)
     """
-    for (goal, _) in a_star_count_nodes(initial_state, is_goal, trans_op, f):
+    for goal, _ in a_star_count_nodes(initial_state, is_goal, trans_op, f):
         yield goal
 
 
@@ -93,7 +93,7 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
                     num_to_keep = floor(tmp_queue.qsize() * bound)
                 else:
                     num_to_keep = min(bound, tmp_queue.qsize())
-                for i in range(num_to_keep):
+                for _ in range(num_to_keep):
                     queue.put(tmp_queue.get())
             else:
                 for successor in successors:

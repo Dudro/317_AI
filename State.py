@@ -40,16 +40,13 @@ class State:
         :type other: State
         :rtype: bool
         """
-        cars = self.get_car_locs()
         other_cars = other.get_car_locs()
-        for i in range(len(cars)):
-            if cars[i][len(cars[i]) - 1] != \
-                    other_cars[i][len(other_cars[i]) - 1]:
+        for i, car in enumerate(self._car_locs):
+            if car[len(car) - 1] != other_cars[i][len(other_cars[i]) - 1]:
                 return False
-        packs = self.get_packages()
         other_packs = other.get_packages()
-        for i in range(len(packs)):
-            if packs[i] != other_packs[i]:
+        for i, pack in enumerate(self._packages):
+            if pack != other_packs[i]:
                 return False
         return True
 
@@ -124,7 +121,7 @@ class State:
         """
         return self.get_num_undelivered() == 0
 
-    # Heuristics
+    # ===== Heuristics ===== #
 
     def zero_h(self):
         """
@@ -148,10 +145,9 @@ class State:
         :rtype: float
         """
         sum_of_package_distances = 0
-        for i in range(len(self._packages)):
-            if not self._packages[i]:  # if package is not yet delivered
-                sum_of_package_distances += \
-                    self._world.get_package_cost(i)
+        for i, pack in enumerate(self._packages):
+            if not pack:  # if package is not yet delivered
+                sum_of_package_distances += self._world.get_package_cost(i)
         return sum_of_package_distances
 
     def sum_of_package_distance_scaled_h(self):
