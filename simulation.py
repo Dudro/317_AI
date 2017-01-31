@@ -22,6 +22,37 @@ def a_star_simulations(n, k, m, h, num_sims):
     return _run_simulations(n, k, m, h, num_sims, a_star_any_graph)
 
 
+def bounded_a_star_simulations(n, k, m, h, num_sims, bound):
+    """
+    Runs Bounded A* with the specified heuristic on 'num_sims' different
+    problems, by generating, for each one, a random (but deterministically
+    seeded) problems according to the parameters n, k, and m. Returns a list of
+    dictionaries, one dictionary per simulation, where each dictionary contains
+    simulation results.
+
+    :param n: the number of cars in this problem
+    :type n: int
+    :param k: the number of packages in this problem
+    :type k: int
+    :param m: the number of vertices in the full map for this problem
+    :type m: int
+    :param h: the heuristic function that Bounded A* will use
+    :type h: State => float
+    :param num_sims: the number of A* simulations to run
+    :type num_sims: int
+    :param bound: if a float between 0 (exclusive) and 1 (exclusive), then
+        interpreted as a percentage, and the best 'bound' %, rounded up of
+        the successors are kept; if an int that is 1 (inclusive) or greater,
+        then interpreted as the maximum number of successors to keep; if 0
+        (inclusive) or less, then keep all successors, like regular a_star.
+    :type bound: int or float
+    :rtype: list(dict)
+    """
+    from search import bounded_a_star_any_graph
+    return _run_simulations(n, k, m, h, num_sims, bounded_a_star_any_graph,
+                            bound)
+
+
 def local_beam_simulations(n, k, m, h, num_sims, k_limit):
     """
     Runs Local Beam Search with the specified heuristic on 'num_sims' different
