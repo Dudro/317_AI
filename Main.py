@@ -82,7 +82,7 @@ if __name__ == "__main__":
                         help="run simulations using Bounded A* Search")
     parser.add_argument("-l", "--local-beam", action='store_true',
                         help="run simulations using Local Beam Search")
-    parser.add_argument("--num_sims", type=parse_positive_int,
+    parser.add_argument("--num-sims", type=parse_positive_int,
                         default=defaults['num_sims'],
                         help="total number of simulations to run")
     parser.add_argument("-n", "--vehicles", type=parse_positive_int,
