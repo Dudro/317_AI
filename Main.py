@@ -73,7 +73,9 @@ def parse_heuristic(value):
 
 if __name__ == "__main__":
     # Define command line arguments.
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Run simulations of search "
+                                                 "for the N-K Problem using "
+                                                 "various search algorithms.")
     parser.add_argument("-v", "--verbose", action='store_true',
                         help="more verbose output")
     parser.add_argument("-a", "--a-star", action='store_true',
