@@ -146,13 +146,15 @@ if __name__ == "__main__":
     if bounded_a_star:
         data_bounded_a_star = bounded_a_star_simulations(n, k, m, h, num_sims,
                                                          bound, verbose)
-        utils.dump_json_data(name + "bounded_a_star", data_bounded_a_star)
-        utils.plot_results(name + "bounded_a_star", data_bounded_a_star)
+        bound_name = name + "bound" + str(bound) + ".bounded_a_star"
+        utils.dump_json_data(bound_name, data_bounded_a_star)
+        utils.plot_results(bound_name, data_bounded_a_star)
 
     if verbose and local_beam:
         print("Local Beam Search simulations.")
     if local_beam:
         data_local_beam = local_beam_simulations(n, k, m, h, num_sims, k_limit,
                                                  verbose)
-        utils.dump_json_data(name + "local_beam", data_local_beam)
-        utils.plot_results(name + "local_beam", data_local_beam)
+        local_beam_name = name + "k_limit" + str(k_limit) + ".local_beam"
+        utils.dump_json_data(local_beam_name, data_local_beam)
+        utils.plot_results(local_beam_name, data_local_beam)
