@@ -1,4 +1,4 @@
-def a_star_simulations(n, k, m, h, num_sims):
+def a_star_simulations(n, k, m, h, num_sims, verbose):
     """
     Runs A* with the specified heuristic on 'num_sims' different problems, by
     generating, for each one, a random (but deterministically seeded) problems
@@ -16,13 +16,15 @@ def a_star_simulations(n, k, m, h, num_sims):
     :type h: State => float
     :param num_sims: the number of A* simulations to run
     :type num_sims: int
+    :param verbose: if true, print simulation number before each simulation
+    :type verbose: bool
     :rtype: list(dict)
     """
     from search import a_star_any_graph
-    return _run_simulations(n, k, m, h, num_sims, a_star_any_graph)
+    return _run_simulations(n, k, m, h, num_sims, a_star_any_graph, verbose)
 
 
-def bounded_a_star_simulations(n, k, m, h, num_sims, bound):
+def bounded_a_star_simulations(n, k, m, h, num_sims, bound, verbose):
     """
     Runs Bounded A* with the specified heuristic on 'num_sims' different
     problems, by generating, for each one, a random (but deterministically
@@ -46,14 +48,16 @@ def bounded_a_star_simulations(n, k, m, h, num_sims, bound):
         then interpreted as the maximum number of successors to keep; if 0
         (inclusive) or less, then keep all successors, like regular a_star.
     :type bound: int or float
+    :param verbose: if true, print simulation number before each simulation
+    :type verbose: bool
     :rtype: list(dict)
     """
     from search import bounded_a_star_any_graph
     return _run_simulations(n, k, m, h, num_sims, bounded_a_star_any_graph,
-                            bound)
+                            verbose, bound)
 
 
-def local_beam_simulations(n, k, m, h, num_sims, k_limit):
+def local_beam_simulations(n, k, m, h, num_sims, k_limit, verbose):
     """
     Runs Local Beam Search with the specified heuristic on 'num_sims' different
     problems, by generating, for each one, a random (but deterministically
@@ -74,13 +78,17 @@ def local_beam_simulations(n, k, m, h, num_sims, k_limit):
     :param k_limit: the number of successor states that will being considered
         minus 1
     :type k_limit: int
+    :param verbose: if true, print simulation number before each simulation
+    :type verbose: bool
     :rtype: list(dict)
     """
     from search import local_beam_any_graph
-    return _run_simulations(n, k, m, h, num_sims, local_beam_any_graph, k_limit)
+    return _run_simulations(n, k, m, h, num_sims, local_beam_any_graph,
+                            verbose, k_limit)
 
 
-def _run_simulations(n, k, m, h, num_sims, search_alg, *args, **kwargs):
+def _run_simulations(n, k, m, h, num_sims, search_alg, verbose, *args,
+                     **kwargs):
     """
     Runs the given search algorithm with the specified heuristic on 'num_sims'
     different problems, by generating, for each one, a random (but
@@ -101,6 +109,8 @@ def _run_simulations(n, k, m, h, num_sims, search_alg, *args, **kwargs):
     :param search_alg: the search algorithm to use; e.g. a_star_any_graph or
         local_beam_any_graph. It should return a dictionary of search results.
     :type search_alg: (n, k, m, full_graph, pairs, h, *args, **kwargs) => dict
+    :param verbose: if true, print simulation number before each simulation
+    :type verbose: bool
     :param args: additional arguments to 'search_alg'
     :param kwargs: additional arguments to 'search_alg'
     :rtype: list(dict)
@@ -112,7 +122,8 @@ def _run_simulations(n, k, m, h, num_sims, search_alg, *args, **kwargs):
     for i in range(num_sims):  # Run the simulations.
         random_graph, pairs = get_random_graph(k, m, i)
         pairs = utils.filter_pairs(pairs)
-        print("Starting problem", i, flush=True)
+        if verbose:
+            print("Starting problem", i, flush=True)
         data.append(search_alg(n, k, m, random_graph, pairs, h, *args,
                                **kwargs))
     return data
