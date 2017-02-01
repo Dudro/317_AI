@@ -90,9 +90,9 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
                     tmp_queue.put((f(successor), counter, successor))
                     counter += 1
                 if 0 < bound < 1:
-                    num_to_keep = max(1, ceil(tmp_queue.qsize() * bound))
+                    num_to_keep = int(max(1, ceil(tmp_queue.qsize() * bound)))
                 else:
-                    num_to_keep = min(bound, tmp_queue.qsize())
+                    num_to_keep = min(int(bound), tmp_queue.qsize())
                 for _ in range(num_to_keep):
                     queue.put(tmp_queue.get())
             else:
