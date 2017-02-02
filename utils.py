@@ -115,6 +115,7 @@ def output_bar_multiple(path, datas):
         pre_processing.append(go.Bar(plot_data["pre_processing_time"]))
         simulation.append(go.Bar(plot_data["simulation_time"]))
         nodes.append(go.Bar(plot_data["node_count"]))
+
     layout = dict(title='Cost path',
                   xaxis=dict(title='Graph number'),
                   yaxis=dict(title='Cost'),
@@ -148,7 +149,6 @@ def output_bar_multiple(path, datas):
     fig = dict(data = nodes,layout = layout)
     py.plot(fig, filename="node.count"+path)
 
-        # py.plot(to_plot, filename=path, auto_open=False)
 
 
 def output_plot_multiple(path, datas):
