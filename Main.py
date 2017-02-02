@@ -15,6 +15,14 @@ defaults = {
     'k_limit': 20
 }
 
+# All available heuristics.
+heuristics = {
+    "zero": State.zero_h,
+    "undelivered": State.undelivered_h,
+    "scaled": State.sum_of_package_distance_scaled_h,
+    "sum": State.sum_of_package_distance_h
+}
+
 
 def parse_positive_int(value):
     """
@@ -50,27 +58,6 @@ def parse_bound(value):
         return b
 
 
-def parse_heuristic(value):
-    """
-    Returns both the heuristic function and the heuristic function name
-    corresponding to the given value, raising an error if the value is not a
-    legal heuristic function name.
-
-    :param value: the string to parse
-    :return: (State => float, string)
-    """
-    if value == "zero":
-        return State.zero_h, value
-    elif value == "undelivered":
-        return State.undelivered_h, value
-    elif value == "scaled":
-        return State.sum_of_package_distance_scaled_h, value
-    elif value == "sum":
-        return State.sum_of_package_distance_h, value
-    else:
-        raise argparse.ArgumentTypeError("invalid heuristic argument: " + value)
-
-
 if __name__ == "__main__":
     # Define command line arguments.
     parser = argparse.ArgumentParser(description="Run simulations of search "
@@ -96,11 +83,9 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--locations", type=parse_positive_int,
                         default=defaults['m'],
                         help="number of locations in the input map")
-    parser.add_argument("--heuristic", type=parse_heuristic,
-                        default=(defaults['h'], defaults['h_name']),
+    parser.add_argument("--heuristic", default=defaults['h_name'],
                         choices=["zero", "undelivered", "scaled", "sum"],
                         help="heuristic function to use")
-
     parser.add_argument("--bound", type=parse_bound, default=defaults['bound'],
                         help="causes Bounded A* to keep only the best BOUND "
                              "number of successors for any given state; can "
@@ -125,7 +110,8 @@ if __name__ == "__main__":
     n = args.vehicles
     k = args.packages
     m = args.locations
-    h, h_name = args.heuristic
+    h_name = args.heuristic
+    h = heuristics[h_name]
     bound = args.bound
     k_limit = args.k_limit
 
