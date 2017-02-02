@@ -42,6 +42,9 @@ class World:
         self._important_vertices = None
         self._G = g
 
+    def get_full_map(self):
+        return self._full_map
+        
     def get_garage(self):
         """
         Returns the vertex index of the garage.

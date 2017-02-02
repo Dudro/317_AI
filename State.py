@@ -301,3 +301,213 @@ def recreate_paths(state):
             this_path.reverse()
         all_paths.append(this_path)
     return all_paths
+
+    
+
+
+class VanillaState(State):
+
+    def __init__(self, world, car_locs, packages, cost_so_far, held):
+        super(VanillaState, self).__init__(world, car_locs, packages, cost_so_far)
+        self._held = held
+
+    def __eq__(self, other):
+        cars = self.get_car_locs()
+        other_cars = other.get_car_locs()
+        for i in range(len(cars)):
+            if cars[i][len(cars[i]) - 1] != \
+                    other_cars[i][len(other_cars[i]) - 1]:
+                return False
+        packs = self.get_packages()
+        other_packs = other.get_packages()
+        for i in range(len(packs)):
+            if packs[i] != other_packs[i]:
+                return False
+        held = self.get_held()
+        other_held = other.get_held()
+        for i in range(len(held)):
+            if held[i] != other_held[i]:
+                return False
+        return True
+        
+    def get_cars_in_garage():
+        results = []
+        garage = self.get_world().get_garage()
+        for i in len(self.get_car_locs()):
+            if self.get_car_loc(i) == garage:
+                results.append(i)
+        return results        
+                
+    # held: array of indices of the package each car is holding, if any            
+    def get_held(self):
+        return self._held
+
+    def get_package_loc(self, k):
+        packs = self.get_packages()
+        world = self.get_world()
+        if k > len(packs):
+            return None
+        if packs[k] == True:
+            return world.get_package_dest(k)
+        else:
+            held = self.get_held()
+            for i in range(len(held)):
+                if held[i] == k:
+                    return self.get_car_loc(i)
+            return world.get_package_source(k)
+
+
+def recursive_neighbour_generator(number_of_cars, i, car_locs, world, ignore=[]):
+    if i == number_of_cars:
+        yield []
+    elif i in ignore:
+        while True:
+            result = recursive_neighbour_generator(number_of_cars, i+1, car_locs, world)
+            if result == []:
+                break;
+            yield [car_locs[i][len(car_locs[i])-1]] + result
+    else:
+        adjacency = dict(world.get_full_map()[car_locs[i][len(car_locs[i])-1]])
+        while len(adjacency) != 0:
+            next_neighbour = adjacency.popItem()
+            
+            while True:
+                result = recursive_neighbour_generator(number_of_cars, i+1, car_locs, world)
+                if result == []:
+                    break;
+                yield [next_neighbour[0]] + result
+        yield []
+
+def state_transition_vanilla(state):
+    successors = []
+    world = state.get_world()
+    number_of_cars = world.get_number_of_cars()
+    if state.all_packages_delivered():
+        for combo in recursive_neighbour_generator(number_of_cars, 0, state.get_car_locs(), world, ignore=state.get_cars_in_garage()):
+            new_car_locs = [[world.get_garage()]] * number_of_cars 
+            new_g = state.get_g()
+            for n in range(number_of_cars):
+                new_car_locs[n] = copy.deepcopy(state.get_car_path(n))
+            for i in range(number_of_cars):
+                if state.get_car_loc(i) != world.get_garage():
+                    start = state.get_car_loc(i)
+                    end = combo[i]
+                    
+                    for edge in list(world.get_full_map().edges(data='weight', default=1)):
+                        if edge[0] == start and edge[1] == end:
+                            new_g += edge[2]
+                            print("Added to g " + edge[2])
+                            break;
+                    new_car_locs[i].append(combo[i])
+                    
+            new_state = VanillaState(world, new_car_locs, state.get_packages(), new_g, state.get_held())
+            successors.append(new_state)
+        return successors
+    current_packages = state.get_packages()
+    for i in range(1, number_of_cars+1):
+        print("Trying all combinations with all but", i, "cars moving.")
+        for cars in combinations(number_of_cars, i):
+            for combo in recursive_neighbour_generator(number_of_cars, 0, state.get_car_locs(), world, ignore=cars):
+                new_car_locs = [[world.get_garage()]] * number_of_cars 
+                new_g = state.get_g()
+                for n in range(number_of_cars):
+                    new_car_locs[n] = copy.deepcopy(state.get_car_path(n))
+                new_packages = copy.deepcopy(state.get_packages())
+                new_held = copy.deepcopy(state.get_held())
+
+                for i in range(number_of_cars):
+                    start = state.get_car_loc(i)
+                    end = combo[i]
+                    #calculate g for car movement in this step
+                    for edge in list(world.get_full_map().edges(data='weight', default=1)):
+                        if edge[0] == start and edge[1] == end:
+                            new_g += edge[2]
+                            print("Added to g " + edge[2])
+                            break;
+                    new_car_locs[i].append(combo[i])
+                    #detect if we dropped off a package after moving
+                    if new_held[i] != -1:
+                        held_package = new_held[i]
+                        if world.get_package_dest(held_package) == end:
+                            new_packages[held_package] = True
+                            new_held[i] = -1
+          
+                #make permutations of picking up packages
+                impossible_pickups = [False * len(new_packages)]
+                possible_count = len(new_packages)
+                for k in range(len(new_packages)):
+                    if not new_packages[k]:
+                        if not(world.get_package_source(k) in combo):
+                            impossible_pickups[k] = True
+                            possible_count -= 1
+                    else:
+                        impossible_pickups[k] = True
+                        possible_count -= 1
+                #impossible_pickups now contains all the packages to exclude from the permutation
+                for i in range(1, possible_count):
+                    for packs_perm in permutations_exclude(possible_count, i, exclude=impossible_pickups):
+                        for pack in packs_perm:
+                            for n in range(len(new_car_locs)):
+                                if new_held[n] == -1 and new_car_locs[n][len(new_car_locs[n])-1] == world.get_package_source(pack):
+                                    new_held[n] = pack
+                                    break;
+                        
+                        new_state = VanillaState(world, new_car_locs, new_packages, new_g, new_held)
+                        # print("Generated successor: ", flush=True)
+                        # print(new_state.get_car_locs(), flush=True)
+                        # print(new_state.get_packages(), flush=True)
+                        successors.append(new_state)
+    print("Now run it with all the cars moving.")
+    for combo in recursive_neighbour_generator(number_of_cars, 0, state.get_car_locs(), world):
+        new_car_locs = [[world.get_garage()]] * number_of_cars 
+        new_g = state.get_g()
+        for n in range(number_of_cars):
+            new_car_locs[n] = copy.deepcopy(state.get_car_path(n))
+        new_packages = copy.deepcopy(state.get_packages())
+        new_held = copy.deepcopy(state.get_held())
+
+        for i in range(number_of_cars):
+            start = state.get_car_loc(i)
+            end = combo[i]
+            #calculate g for car movement in this step
+            for edge in list(world.get_full_map().edges(data='weight', default=1)):
+                if edge[0] == start and edge[1] == end:
+                    new_g += edge[2]
+                    print("Added to g " + edge[2])
+                    break;
+            new_car_locs[i].append(combo[i])
+            #detect if we dropped off a package after moving
+            if new_held[i] != -1:
+                held_package = new_held[i]
+                if world.get_package_dest(held_package) == end:
+                    new_packages[held_package] = True
+                    new_held[i] = -1
+  
+        #make permutations of picking up packages
+        impossible_pickups = [False * len(new_packages)]
+        possible_count = len(new_packages)
+        for k in range(len(new_packages)):
+            if not new_packages[k]:
+                if not(world.get_package_source(k) in combo):
+                    impossible_pickups[k] = True
+                    possible_count -= 1
+            else:
+                impossible_pickups[k] = True
+                possible_count -= 1
+        #impossible_pickups now contains all the packages to exclude from the permutation
+        for i in range(1, possible_count):
+            for packs_perm in permutations_exclude(possible_count, i, exclude=impossible_pickups):
+                for pack in packs_perm:
+                    for n in range(len(new_car_locs)):
+                        if new_held[n] == -1 and new_car_locs[n][len(new_car_locs[n])-1] == world.get_package_source(pack):
+                            new_held[n] = pack
+                            break;
+                
+                new_state = VanillaState(world, new_car_locs, new_packages, new_g, new_held)
+                # print("Generated successor: ", flush=True)
+                # print(new_state.get_car_locs(), flush=True)
+                # print(new_state.get_packages(), flush=True)
+                successors.append(new_state)
+    print("Successors for this node: " + str(len(successors)))
+    return successors
+            
