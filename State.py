@@ -373,7 +373,7 @@ def recursive_neighbour_generator(number_of_cars, i, car_locs, world,
         adjacency = dict(
             world.get_full_map()[car_locs[i][len(car_locs[i]) - 1]])
         while len(adjacency) != 0:
-            next_neighbour = adjacency.popItem()
+            next_neighbour = adjacency.popitem()
 
             while True:
                 result = recursive_neighbour_generator(number_of_cars, i + 1,
@@ -464,8 +464,10 @@ def state_transition_vanilla(state):
                         for pack in packs_perm:
                             for n in range(len(new_car_locs)):
                                 if new_held[n] == -1 and \
-                                    new_car_locs[n][len(new_car_locs[n]) - 1] \
-                                        == world.get_package_source(pack):
+                                                new_car_locs[n][len(
+                                                    new_car_locs[n]) - 1] \
+                                                == world.get_package_source(
+                                            pack):
                                     new_held[n] = pack
                                     break
 
