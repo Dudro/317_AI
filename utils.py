@@ -80,24 +80,28 @@ def eprint(*args, **kwargs):
 
     print(*args, file=sys.stderr, **kwargs)
 
-def output_bar_multiple(path, datas):
+
+def output_bar_multiple(path, data_list):
     """
-    Writes plots of the given data in the file corresponding to the given path.
+    Writes bar plots of the given data to the file corresponding to the given
+    path.
 
-    :param path: the file path where you wanna create files
-    :param datas: the data to plot, data is expected to be a dictionary with two keys, algorithm and data,
-                  data is another array which includes key value pair of types of graph you want, which will
-                  be pre_processing_time, cost_sum, simulation_time and node_count
-
+    :param path: the file path
+    :param data_list: the data to plot; data_list should be a list of data
+        dictionaries; each data dictionary should have two keys, 'algorithm'
+        and 'data'; the value of 'algorithm' should be the name of the
+        algorithm used (string); the value of 'data' is a list of dictionaries,
+        where each dictionary includes key-value pairs for the types of graph
+        you want (pre_processing_time, cost_sum, simulation_time, and
+        node_count)
     """
     from plotly import offline as py
     from plotly import graph_objs as go
-    from plotly import tools
     cost = []
     pre_processing = []
     simulation = []
     nodes = []
-    for dataDict in datas:
+    for dataDict in data_list:
         data = dataDict["data"]
         plot_data = {}
         for key in data[0].keys():
@@ -119,56 +123,52 @@ def output_bar_multiple(path, datas):
     layout = dict(title='Cost path',
                   xaxis=dict(title='Graph number'),
                   yaxis=dict(title='Cost'),
-                  barmode='group'
-
-                  )
-    fig = dict(data = cost,layout = layout)
+                  barmode='group')
+    fig = dict(data=cost, layout=layout)
     py.plot(fig, filename="cost." + path)
 
     layout = dict(title='Pre Processing time',
                   xaxis=dict(title='Graph number'),
                   yaxis=dict(title='time'),
-                  barmode='group'
-                  )
-    fig = dict(data = pre_processing,layout = layout)
-    py.plot(fig, filename="processing.time.."+path)
+                  barmode='group')
+    fig = dict(data=pre_processing, layout=layout)
+    py.plot(fig, filename="processing.time.." + path)
 
     layout = dict(title='Simulation time',
                   xaxis=dict(title='Graph number'),
                   yaxis=dict(title='time'),
-                  barmode='group'
-                  )
-    fig = dict(data = simulation,layout = layout)
-    py.plot(fig, filename="simulation.time"+path)
+                  barmode='group')
+    fig = dict(data=simulation, layout=layout)
+    py.plot(fig, filename="simulation.time" + path)
 
     layout = dict(title='Node count',
                   xaxis=dict(title='Graph number'),
                   yaxis=dict(title='number'),
-                  barmode='group'
-                  )
-    fig = dict(data = nodes,layout = layout)
-    py.plot(fig, filename="node.count"+path)
+                  barmode='group')
+    fig = dict(data=nodes, layout=layout)
+    py.plot(fig, filename="node.count" + path)
 
 
-
-def output_plot_multiple(path, datas):
+def output_plot_multiple(path, data_list):
     """
-    Writes plots of the given data in the file corresponding to the given path.
+    Writes plots of the given data to the file corresponding to the given path.
 
-    :param path: the file path where you wanna create files
-    :param datas: the data to plot, data is expected to be a dictionary with two keys, algorithm and data,
-                  data is another array which includes key value pair of types of graph you want, which will
-                  be pre_processing_time, cost_sum, simulation_time and node_count
-
+    :param path: the file path
+    :param data_list: the data to plot; data_list should be a list of data
+        dictionaries; each data dictionary should have two keys, 'algorithm'
+        and 'data'; the value of 'algorithm' should be the name of the
+        algorithm used (string); the value of 'data' is a list of dictionaries,
+        where each dictionary includes key-value pairs for the types of graph
+        you want (pre_processing_time, cost_sum, simulation_time, and
+        node_count)
     """
     from plotly import offline as py
     from plotly import graph_objs as go
-    from plotly import tools
     cost = []
     pre_processing = []
     simulation = []
     nodes = []
-    for dataDict in datas:
+    for dataDict in data_list:
         data = dataDict["data"]
         plot_data = {}
         for key in data[0].keys():
@@ -188,35 +188,29 @@ def output_plot_multiple(path, datas):
         nodes.append(go.Scatter(plot_data["node_count"]))
     layout = dict(title='Cost path',
                   xaxis=dict(title='Graph number'),
-                  yaxis=dict(title='Cost'),
-                  )
-    fig = dict(data = cost,layout = layout)
+                  yaxis=dict(title='Cost'))
+    fig = dict(data=cost, layout=layout)
     py.plot(fig, filename="C" + path)
 
     layout = dict(title='Pre Processing time',
                   xaxis=dict(title='Graph number'),
-                  yaxis=dict(title='time'),
-                  )
-    fig = dict(data = pre_processing,layout = layout)
-    py.plot(fig, filename="P"+path)
+                  yaxis=dict(title='time'))
+    fig = dict(data=pre_processing, layout=layout)
+    py.plot(fig, filename="P" + path)
 
     layout = dict(title='Simulation time',
                   xaxis=dict(title='Graph number'),
-                  yaxis=dict(title='time'),
-                  )
-    fig = dict(data = simulation,layout = layout)
-    py.plot(fig, filename="S"+path)
+                  yaxis=dict(title='time'))
+    fig = dict(data=simulation, layout=layout)
+    py.plot(fig, filename="S" + path)
 
     layout = dict(title='Node count',
                   xaxis=dict(title='Graph number'),
-                  yaxis=dict(title='number'),
-                  )
-    fig = dict(data = nodes,layout = layout)
-    py.plot(fig, filename="N"+path)
+                  yaxis=dict(title='number'))
+    fig = dict(data=nodes, layout=layout)
+    py.plot(fig, filename="N" + path)
 
-        # py.plot(to_plot, filename=path, auto_open=False)
-
-
+    # py.plot(to_plot, filename=path, auto_open=False)
 
 
 def output_plot(path, data):
@@ -266,6 +260,8 @@ def output_plot(path, data):
     to_plot.append_trace(nodes, 3, 1)
 
     py.plot(to_plot, filename=path, auto_open=False)
+
+
 def dump_json_data(name, data):
     """
     Writes the given data to the given file in JSON.
@@ -278,14 +274,20 @@ def dump_json_data(name, data):
     with open(file_name, 'w+') as out:
         json.dump(data, out, indent=4)
 
+
 def read_json_data(name):
+    """
+    Reads data in JSON from the given file, and returns the resulting data.
+
+    :param name: the name of the JSON file
+    :rtpye: data
+    """
     import json
     with open(name) as data_file:
         data = json.load(data_file)
-        if data == None:
-            raise "File not found"
+        if data is None:
+            raise FileNotFoundError("File " + str(name) + " was not found.")
         return data
-
 
 
 def plot_results(name, data):
