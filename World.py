@@ -43,8 +43,12 @@ class World:
         self._G = g
 
     def get_full_map(self):
+        """
+        Returns the original full map.
+        :rtype: NetworkX Graph
+        """
         return self._full_map
-        
+
     def get_garage(self):
         """
         Returns the vertex index of the garage.
