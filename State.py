@@ -424,12 +424,12 @@ def state_transition_vanilla(state):
                 new_g = state.get_g()
                 for n in range(number_of_cars):
                     new_car_locs[n] = copy.deepcopy(state.get_car_path(n))
-                new_packages = copy.deepcopy(state.get_packages())
+                new_packages = copy.deepcopy(current_packages)
                 new_held = copy.deepcopy(state.get_held())
 
-                for i in range(number_of_cars):
-                    start = state.get_car_loc(i)
-                    end = combo[i]
+                for j in range(number_of_cars):
+                    start = state.get_car_loc(j)
+                    end = combo[j]
                     # calculate g for car movement in this step
                     for edge in list(world.get_full_map().edges(data='weight',
                                                                 default=1)):
@@ -437,13 +437,13 @@ def state_transition_vanilla(state):
                             new_g += edge[2]
                             print("Added to g " + edge[2])
                             break
-                    new_car_locs[i].append(combo[i])
+                    new_car_locs[j].append(combo[j])
                     # detect if we dropped off a package after moving
-                    if new_held[i] != -1:
-                        held_package = new_held[i]
+                    if new_held[j] != -1:
+                        held_package = new_held[j]
                         if world.get_package_dest(held_package) == end:
                             new_packages[held_package] = True
-                            new_held[i] = -1
+                            new_held[j] = -1
 
                 # make permutations of picking up packages
                 impossible_pickups = [False * len(new_packages)]
@@ -458,9 +458,9 @@ def state_transition_vanilla(state):
                         possible_count -= 1
                 # impossible_pickups now contains all the packages to exclude
                 # from the permutation
-                for i in range(1, possible_count):
+                for j in range(1, possible_count):
                     for packs_perm in permutations_exclude(
-                            possible_count, i, exclude=impossible_pickups):
+                            possible_count, j, exclude=impossible_pickups):
                         for pack in packs_perm:
                             for n in range(len(new_car_locs)):
                                 if new_held[n] == -1 and \
@@ -484,7 +484,7 @@ def state_transition_vanilla(state):
         new_g = state.get_g()
         for n in range(number_of_cars):
             new_car_locs[n] = copy.deepcopy(state.get_car_path(n))
-        new_packages = copy.deepcopy(state.get_packages())
+        new_packages = copy.deepcopy(current_packages)
         new_held = copy.deepcopy(state.get_held())
 
         for i in range(number_of_cars):
