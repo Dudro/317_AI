@@ -12,7 +12,7 @@ defaults = {
     'h': State.sum_of_package_distance_h,
     'h_name': "sum",
     'state_type': 'State',
-    'bound': 0.01,
+    'bound': 1,
     'k_limit': 20
 }
 
@@ -152,8 +152,9 @@ if __name__ == "__main__":
     if _a_star:
         data_a_star = a_star_simulations(_n, _k, _m, _h, _num_sims,
                                          _state_type, _verbose)
+        data_a_star['h_name'] = _h_name
         utils.dump_json_data(_names['a_star'], data_a_star)
-        utils.plot_results(_names['a_star'], data_a_star)
+        # utils.plot_results(_names['a_star'], data_a_star)
 
     if _verbose and _bounded_a_star:
         print("Bounded A* simulations.")
@@ -162,8 +163,9 @@ if __name__ == "__main__":
                                                          _num_sims,
                                                          _state_type, _bound,
                                                          _verbose)
+        data_bounded_a_star['h_name'] = _h_name
         utils.dump_json_data(_names['bounded_a_star'], data_bounded_a_star)
-        utils.plot_results(_names['bounded_a_star'], data_bounded_a_star)
+        # utils.plot_results(_names['bounded_a_star'], data_bounded_a_star)
 
     if _verbose and _local_beam:
         print("Local Beam Search simulations.")
@@ -171,5 +173,6 @@ if __name__ == "__main__":
         data_local_beam = local_beam_simulations(_n, _k, _m, _h, _num_sims,
                                                  _state_type, _k_limit,
                                                  _verbose)
+        data_local_beam['h_name'] = _h_name
         utils.dump_json_data(_names['local_beam'], data_local_beam)
-        utils.plot_results(_names['local_beam'], data_local_beam)
+        # utils.plot_results(_names['local_beam'], data_local_beam)

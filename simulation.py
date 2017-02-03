@@ -140,4 +140,11 @@ def _run_simulations(n, k, m, h, num_sims, search_alg, state_type, verbose,
             print("Starting problem", i, flush=True)
         data.append(search_alg(n, k, m, random_graph, pairs, state_type, h,
                                *args, **kwargs))
-    return data
+    return {
+        'num_sims': num_sims,
+        'n': n,
+        'k': k,
+        'm': m,
+        'state_type': state_type,
+        'data': data
+    }
