@@ -37,8 +37,10 @@ def a_star_any_graph(n, k, m, full_map, pairs, state_type, h, num_sols=1):
     :rtype: dict
     """
     from astar import a_star_count_nodes
-    return _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
+    data = _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
                        a_star_count_nodes)
+    data['algorithm'] = 'a_star'
+    return data
 
 
 def bounded_a_star_any_graph(n, k, m, full_map, pairs, state_type, h, bound,
@@ -81,8 +83,11 @@ def bounded_a_star_any_graph(n, k, m, full_map, pairs, state_type, h, bound,
     :rtype: dict
     """
     from astar import bounded_a_star
-    return _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
+    data = _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
                        bounded_a_star, bound)
+    data['algorithm'] = 'bounded_a_star'
+    data['bound'] = bound
+    return data
 
 
 def local_beam_any_graph(n, k, m, full_map, pairs, state_type, h, k_limit,
@@ -122,8 +127,11 @@ def local_beam_any_graph(n, k, m, full_map, pairs, state_type, h, k_limit,
     :rtype: dict
     """
     from localbeam import local_beam_search
-    return _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
+    data = _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
                        local_beam_search, k_limit)
+    data['algorithm'] = 'local_beam'
+    data['k_limit'] = k_limit
+    return data
 
 
 def _run_search(n, k, m, full_map, pairs, num_sols, state_type, h, algorithm,
