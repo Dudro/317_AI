@@ -1,9 +1,9 @@
 from Main import *
-import argparse
 import subprocess
+import argparse
 
 
-def run_sims(verbose, a_star, h_name, push):
+def run_sims(verbose, a_star, h_name, vanilla, push):
     """
     Runs a suite of simulations based on the level of 'push'. The other
     parameters simply cause their command line equivalent to be passed to each
@@ -14,6 +14,8 @@ def run_sims(verbose, a_star, h_name, push):
     :param a_star: run simulations using (the slower) A* as well as the other
         algorithms
     :param h_name: the name of the heuristic function to use
+    :param vanilla: if True, use the vanilla state transition operator;
+        otherwise use the regular state transition operator
     :param push: how much to push each parameter; choice of [0, 1, 2, 3]
     :rtype: list(string)
     """
@@ -59,21 +61,21 @@ def run_sims(verbose, a_star, h_name, push):
 
     # Vary the number of cars.
     for n in n_set:
-        arg_list = build_arg_list(verbose, a_star, num_sims, h_name)
+        arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla)
         arg_list.extend(["-n", str(n)])
         do_run(arg_list, get_file_names(num_sims=num_sims, n=n, h_name=h_name),
                file_names, a_star=a_star)
 
     # Vary the number of packages.
     for k in k_set:
-        arg_list = build_arg_list(verbose, a_star, num_sims, h_name)
+        arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla)
         arg_list.extend(["-k", str(k)])
         do_run(arg_list, get_file_names(num_sims=num_sims, k=k, h_name=h_name),
                file_names, a_star=a_star)
 
     # Vary the number of locations.
     for m in m_set:
-        arg_list = build_arg_list(verbose, a_star, num_sims, h_name)
+        arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla)
         arg_list.extend(["-m", str(m)])
         do_run(arg_list, get_file_names(num_sims=num_sims, m=m, h_name=h_name),
                file_names, a_star=a_star)
@@ -84,7 +86,7 @@ def run_sims(verbose, a_star, h_name, push):
 
     # Vary the bound for bounded A* as a percentage.
     for bound in bound_percentage_set:
-        arg_list = build_arg_list(verbose, a_star, num_sims, h_name,
+        arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla,
                                   local_beam=False)
         arg_list.extend(["-n", max_n, "-k", max_k, "-m", max_m, "--bound",
                          str(bound)])
@@ -94,7 +96,7 @@ def run_sims(verbose, a_star, h_name, push):
 
     # Vary the bound for bounded A* as a cap.
     for bound in bound_cap_set:
-        arg_list = build_arg_list(verbose, a_star, num_sims, h_name,
+        arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla,
                                   local_beam=False)
         arg_list.extend(["-n", max_n, "-k", max_k, "-m", max_m, "--bound",
                          str(bound)])
@@ -104,7 +106,7 @@ def run_sims(verbose, a_star, h_name, push):
 
     # Vary k_limit for Local Beam Search.
     for k_limit in k_limit_set:
-        arg_list = build_arg_list(verbose, a_star, num_sims, h_name,
+        arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla,
                                   bounded_a_star=False)
         arg_list.extend(["-n", max_n, "-k", max_k, "-m", max_m, "--k-limit",
                          str(k_limit)])
@@ -116,8 +118,8 @@ def run_sims(verbose, a_star, h_name, push):
     return file_names
 
 
-def build_arg_list(verbose, a_star, num_sims, h_name, bounded_a_star=True,
-                   local_beam=True):
+def build_arg_list(verbose, a_star, num_sims, h_name, vanilla,
+                   bounded_a_star=True, local_beam=True):
     """
     Builds a list of arguments to give to subprocess.run() to run Main.py. The
     given parameters simply cause their command line equivalent to be added to
@@ -131,6 +133,8 @@ def build_arg_list(verbose, a_star, num_sims, h_name, bounded_a_star=True,
         arg_list.append("-v")
     if a_star:
         arg_list.append("-a")
+    if vanilla:
+        arg_list.append("--vanilla")
     if bounded_a_star:
         arg_list.append("-b")
     if local_beam:
@@ -170,11 +174,16 @@ if __name__ == "__main__":
     parser.add_argument("--heuristic", default=defaults['h_name'],
                         choices=["zero", "undelivered", "scaled", "sum"],
                         help="heuristic function to use")
+    parser.add_argument("--vanilla", action='store_true',
+                        help="run simulations with vanilla state transitions")
     parser.add_argument("-p", "--push", type=int, default=0,
                         choices=[0, 1, 2, 3],
                         help="how far to push each parameter")
 
     # Parse command line arguments and run the simulations.
     args = parser.parse_args()
-    files = run_sims(args.verbose, args.a_star, args.heuristic, args.push)
-    print(files)  # Placeholder for more useful work.
+    files = run_sims(args.verbose, args.a_star, args.heuristic, args.vanilla,
+                     args.push)
+    # data_list = [utils.read_json_data(file) for file in files]
+    # utils.output_bar_multiple("bar_plots.html", data_list)
+    # utils.output_plot_multiple("plots.html", data_list)

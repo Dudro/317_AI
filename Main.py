@@ -11,6 +11,7 @@ defaults = {
     'm': 30,
     'h': State.sum_of_package_distance_h,
     'h_name': "sum",
+    'state_type': 'State',
     'bound': 0.01,
     'k_limit': 20
 }
@@ -60,7 +61,8 @@ def parse_bound(value):
 
 def get_file_names(num_sims=defaults['num_sims'], n=defaults['n'],
                    k=defaults['k'], m=defaults['m'],
-                   h_name=defaults['h_name'], bound=defaults['bound'],
+                   h_name=defaults['h_name'],
+                   state_type=defaults['state_type'], bound=defaults['bound'],
                    k_limit=defaults['k_limit']):
     """
     Returns a dict where the keys are search algorithm names and the values are
@@ -70,7 +72,7 @@ def get_file_names(num_sims=defaults['num_sims'], n=defaults['n'],
     :rtype: dict
     """
     name_base = "sims" + str(num_sims) + ".n" + str(n) + ".k" + str(k) + \
-                ".m" + str(m) + "." + h_name + "."
+                ".m" + str(m) + "." + str(h_name) + "." + str(state_type) + "."
     return {
         'a_star': name_base + "a_star",
         'bounded_a_star': name_base + "bound" + str(bound) + ".bounded_a_star",
@@ -106,6 +108,8 @@ if __name__ == "__main__":
     _parser.add_argument("--heuristic", default=defaults['h_name'],
                          choices=["zero", "undelivered", "scaled", "sum"],
                          help="heuristic function to use")
+    _parser.add_argument("--vanilla", action='store_true',
+                         help="run simulations with vanilla state transitions")
     _parser.add_argument("--bound", type=parse_bound, default=defaults['bound'],
                          help="causes Bounded A* to keep only the best BOUND "
                               "number of successors for any given state; can "
@@ -132,6 +136,7 @@ if __name__ == "__main__":
     _m = _args.locations
     _h_name = _args.heuristic
     _h = heuristics[_h_name]
+    _state_type = 'VanillaState' if _args.vanilla else 'State'
     _bound = _args.bound
     _k_limit = _args.k_limit
 
@@ -139,12 +144,14 @@ if __name__ == "__main__":
         raise _parser.error("at least one of -a, -b, or -l must be given")
 
     # Run the simulations and record simulation results.
-    _names = get_file_names(_num_sims, _n, _k, _m, _h_name, _bound, _k_limit)
+    _names = get_file_names(_num_sims, _n, _k, _m, _h_name, _state_type,
+                            _bound, _k_limit)
 
     if _verbose and _a_star:
         print("Regular A* simulations.")
     if _a_star:
-        data_a_star = a_star_simulations(_n, _k, _m, _h, _num_sims, _verbose)
+        data_a_star = a_star_simulations(_n, _k, _m, _h, _num_sims,
+                                         _state_type, _verbose)
         utils.dump_json_data(_names['a_star'], data_a_star)
         utils.plot_results(_names['a_star'], data_a_star)
 
@@ -152,7 +159,8 @@ if __name__ == "__main__":
         print("Bounded A* simulations.")
     if _bounded_a_star:
         data_bounded_a_star = bounded_a_star_simulations(_n, _k, _m, _h,
-                                                         _num_sims, _bound,
+                                                         _num_sims,
+                                                         _state_type, _bound,
                                                          _verbose)
         utils.dump_json_data(_names['bounded_a_star'], data_bounded_a_star)
         utils.plot_results(_names['bounded_a_star'], data_bounded_a_star)
@@ -161,6 +169,7 @@ if __name__ == "__main__":
         print("Local Beam Search simulations.")
     if _local_beam:
         data_local_beam = local_beam_simulations(_n, _k, _m, _h, _num_sims,
-                                                 _k_limit, _verbose)
+                                                 _state_type, _k_limit,
+                                                 _verbose)
         utils.dump_json_data(_names['local_beam'], data_local_beam)
         utils.plot_results(_names['local_beam'], data_local_beam)

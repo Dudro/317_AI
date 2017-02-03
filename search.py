@@ -2,7 +2,7 @@ import timing
 from State import *
 
 
-def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=1):
+def a_star_any_graph(n, k, m, full_map, pairs, state_type, h, num_sols=1):
     """
     Runs A* with the specified heuristic on the given problem. The problem
     definition involves n, k, m, a map, and source-destination pairs. The
@@ -26,19 +26,23 @@ def a_star_any_graph(n, k, m, full_map, pairs, h, num_sols=1):
         problem. Each source and each destination must correspond to a location
         in the full map.
     :type pairs: list((int, int))
+    :param state_type: a string describing what type of state should be used;
+        currently, one of 'State' or 'VanillaState'
+    :type state_type: string
     :param h: the heuristic function that A* will use
-    :type h: State => float
+    :type h: X => float, where X is the type corresponding to 'state_type'
     :param num_sols: the number of solutions that should be generated, or -1 if
         all possible solutions should be generated. Default: 1.
     :type num_sols: int
     :rtype: dict
     """
     from astar import a_star_count_nodes
-    return _run_search(n, k, m, full_map, pairs, num_sols, h,
+    return _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
                        a_star_count_nodes)
 
 
-def bounded_a_star_any_graph(n, k, m, full_map, pairs, h, bound, num_sols=1):
+def bounded_a_star_any_graph(n, k, m, full_map, pairs, state_type, h, bound,
+                             num_sols=1):
     """
     Runs Bounded A* with the specified heuristic on the given problem. The
     problem definition involves n, k, m, a map, and source-destination pairs.
@@ -60,8 +64,11 @@ def bounded_a_star_any_graph(n, k, m, full_map, pairs, h, bound, num_sols=1):
         problem. Each source and each destination must correspond to a location
         in the full map.
     :type pairs: list((int, int))
+    :param state_type: a string describing what type of state should be used;
+        currently, one of 'State' or 'VanillaState'
+    :type state_type: string
     :param h: the heuristic function that Bounded A* will use
-    :type h: State => float
+    :type h: X => float, where X is the type corresponding to 'state_type'
     :param bound: if a float between 0 (exclusive) and 1 (exclusive), then
         interpreted as a percentage, and the best 'bound' %, rounded up of
         the successors are kept; if an int that is 1 (inclusive) or greater,
@@ -74,11 +81,12 @@ def bounded_a_star_any_graph(n, k, m, full_map, pairs, h, bound, num_sols=1):
     :rtype: dict
     """
     from astar import bounded_a_star
-    return _run_search(n, k, m, full_map, pairs, num_sols, h, bounded_a_star,
-                       bound)
+    return _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
+                       bounded_a_star, bound)
 
 
-def local_beam_any_graph(n, k, m, full_map, pairs, h, k_limit, num_sols=1):
+def local_beam_any_graph(n, k, m, full_map, pairs, state_type, h, k_limit,
+                         num_sols=1):
     """
     Runs Local Beam Search with the specified heuristic on the given problem.
     The problem definition involves n, k, m, a map, and source-destination
@@ -100,8 +108,11 @@ def local_beam_any_graph(n, k, m, full_map, pairs, h, k_limit, num_sols=1):
         problem. Each source and each destination must correspond to a location
         in the full map.
     :type pairs: list((int, int))
+    :param state_type: a string describing what type of state should be used;
+        currently, one of 'State' or 'VanillaState'
+    :type state_type: string
     :param h: the heuristic function that Local Beam Search will use
-    :type h: State => float
+    :type h: X => float, where X is the type corresponding to 'state_type'
     :param k_limit: the number of successor states that will being considered
         minus 1
     :type k_limit: int
@@ -111,12 +122,12 @@ def local_beam_any_graph(n, k, m, full_map, pairs, h, k_limit, num_sols=1):
     :rtype: dict
     """
     from localbeam import local_beam_search
-    return _run_search(n, k, m, full_map, pairs, num_sols, h,
+    return _run_search(n, k, m, full_map, pairs, num_sols, state_type, h,
                        local_beam_search, k_limit)
 
 
-def _run_search(n, k, m, full_map, pairs, num_sols, h, algorithm, *args,
-                **kwargs):
+def _run_search(n, k, m, full_map, pairs, num_sols, state_type, h, algorithm,
+                *args, **kwargs):
     """
     Runs the given search algorithm with the specified heuristic on the given
     problem. The problem definition involves n, k, m, a map, and source-
@@ -141,8 +152,11 @@ def _run_search(n, k, m, full_map, pairs, num_sols, h, algorithm, *args,
     :param num_sols: the number of solutions that should be generated, or -1 if
         all possible solutions should be generated.
     :type num_sols: int
+    :param state_type: a string describing what type of state should be used;
+        currently, one of 'State' or 'VanillaState'
+    :type state_type: string
     :param h: the heuristic function that 'algorithm' will use
-    :type h: State => float
+    :type h: X => float, where X is the type corresponding to 'state_type'
     :param algorithm: the search algorithm to use; e.g. a_star_count_nodes or
         local_beam_search. It should return both a solution state and a count
         of the number of nodes expanded during the search.
@@ -151,16 +165,17 @@ def _run_search(n, k, m, full_map, pairs, num_sols, h, algorithm, *args,
     :param kwargs: arguments to 'algorithm'
     :rtype: dict
     """
-    if not _parameters_valid(n, k, m, full_map, pairs, num_sols):
+    if not _parameters_valid(n, k, m, full_map, pairs, num_sols, state_type):
         return None
-    initial, time = _create_problem_representation(n, k, m, full_map, pairs)
-    data = _do_run_search(num_sols, algorithm, initial, is_goal,
-                          state_transition, decorating_f(h), *args, **kwargs)
+    initial, trans_op, time = _create_problem_representation(n, k, m, full_map,
+                                                             pairs, state_type)
+    data = _do_run_search(num_sols, algorithm, initial, is_goal, trans_op,
+                          decorating_f(h), *args, **kwargs)
     data['pre_processing_time'] = time
     return data
 
 
-def _parameters_valid(n, k, m, full_map, pairs, num_sols):
+def _parameters_valid(n, k, m, full_map, pairs, num_sols, state_type):
     """
     Returns True if all parameters are valid, and prints an error message to
     standard error and returns False otherwise.
@@ -181,6 +196,9 @@ def _parameters_valid(n, k, m, full_map, pairs, num_sols):
     :param num_sols: the number of solutions that should be generated, or -1 if
         all possible solutions should be generated.
     :type num_sols: int
+    :param state_type: a string describing what type of state should be used;
+        currently, one of 'State' or 'VanillaState'
+    :type state_type: string
     :rtype: bool
     """
     from networkx import number_of_nodes
@@ -199,14 +217,19 @@ def _parameters_valid(n, k, m, full_map, pairs, num_sols):
         eprint("Error: The number of desired solutions must be -1 or else",
                "cannot be less than 1.")
         return False
+    states = ['State', 'VanillaState']
+    if state_type not in states:
+        eprint("Error: The state type must be one of", states)
+        return False
     return True
 
 
-def _create_problem_representation(n, k, m, full_map, pairs):
+def _create_problem_representation(n, k, m, full_map, pairs, state_type):
     """
-    Represents the problem with a World and and initial State of search.
-    Returns the initial state, and a formatted string representing the process
-    execution time taken to pre-process the given map.
+    Represents the problem with a World and and initial state of search.
+    Returns the initial state, the appropriate transition operator for the type
+    of state, and a formatted string representing the process execution time
+    taken to pre-process the given map.
 
     :param n: the number of cars in this problem
     :type n: int
@@ -221,7 +244,11 @@ def _create_problem_representation(n, k, m, full_map, pairs):
         problem. Each source and each destination must correspond to a location
         in the full map.
     :type pairs: list((int, int))
-    :rtype: (State, string)
+    :param state_type: a string describing what type of state should be used;
+        currently, one of 'State' or 'VanillaState'
+    :type state_type: string
+    :rtype: (X, X => list(X), string), where X is the type corresponding to
+        'state_type'
     """
     world = World(n, k, m, full_map, pairs)
     timing.start_timer()
@@ -229,8 +256,13 @@ def _create_problem_representation(n, k, m, full_map, pairs):
     pre_processing_time = '{:.4f}'.format(timing.end_timer())
     cars = [[world.get_garage()]] * n
     packages = [False] * k
-    initial = State(world, cars, packages, 0)
-    return initial, pre_processing_time
+    if state_type == 'State':
+        initial = State(world, cars, packages, 0)
+        trans_op = state_transition
+    else:  # Precondition checking means we are safe to use just else here.
+        initial = VanillaState(world, cars, packages, 0, [-1] * n)
+        trans_op = state_transition_vanilla
+    return initial, trans_op, pre_processing_time
 
 
 def _do_run_search(num_sols, algorithm, *args, **kwargs):
