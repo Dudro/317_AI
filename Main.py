@@ -12,7 +12,7 @@ defaults = {
     'h': State.sum_of_package_distance_h,
     'h_name': "sum",
     'state_type': 'State',
-    'bound': 0.01,
+    'bound': 1,
     'k_limit': 20
 }
 
