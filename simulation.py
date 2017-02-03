@@ -130,6 +130,7 @@ def _run_simulations(n, k, m, h, num_sims, search_alg, state_type, verbose,
     :rtype: list(dict)
     """
     from graphs import get_random_graph
+    import search
     import utils
 
     data = []  # List of dictionaries (eventually) for data collection.
@@ -140,11 +141,22 @@ def _run_simulations(n, k, m, h, num_sims, search_alg, state_type, verbose,
             print("Starting problem", i, flush=True)
         data.append(search_alg(n, k, m, random_graph, pairs, state_type, h,
                                *args, **kwargs))
+    
+    if search_alg == search.a_star_any_graph:
+        alg = "a_star"
+    elif search_alg == search.bounded_a_star_any_graph:
+        alg = "bounded_a_star"
+    elif search_alg == search.local_beam_any_graph:
+        alg = "local_beam"
+    else:
+        alg = "a_star"
+
     return {
         'num_sims': num_sims,
         'n': n,
         'k': k,
         'm': m,
+        'algorithm': alg,
         'state_type': state_type,
         'data': data
     }

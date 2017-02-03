@@ -102,6 +102,7 @@ def output_bar_multiple(path, data_list):
     simulation = []
     nodes = []
     for dataDict in data_list:
+        print(dataDict)
         data = dataDict["data"]
         plot_data = {}
         for key in data[0].keys():

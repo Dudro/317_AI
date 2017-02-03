@@ -59,10 +59,13 @@ def parse_bound(value):
         return b
 
 
-def get_file_names(num_sims=defaults['num_sims'], n=defaults['n'],
-                   k=defaults['k'], m=defaults['m'],
+def get_file_names(num_sims=defaults['num_sims'],  
+                   n=defaults['n'],
+                   k=defaults['k'], 
+                   m=defaults['m'],
                    h_name=defaults['h_name'],
-                   state_type=defaults['state_type'], bound=defaults['bound'],
+                   state_type=defaults['state_type'], 
+                   bound=defaults['bound'],
                    k_limit=defaults['k_limit']):
     """
     Returns a dict where the keys are search algorithm names and the values are
@@ -71,8 +74,10 @@ def get_file_names(num_sims=defaults['num_sims'], n=defaults['n'],
 
     :rtype: dict
     """
-    name_base = "sims" + str(num_sims) + ".n" + str(n) + ".k" + str(k) + \
-                ".m" + str(m) + "." + str(h_name) + "." + str(state_type) + "."
+    name_base = "sims" + str(num_sims) +".n" + str(n) + ".k" + \
+            str(k) + ".m" + str(m) + "." + str(h_name) + "." + \
+            str(state_type) + "."
+    
     return {
         'a_star': name_base + "a_star",
         'bounded_a_star': name_base + "bound" + str(bound) + ".bounded_a_star",
@@ -143,6 +148,15 @@ if __name__ == "__main__":
     if not _a_star and not _bounded_a_star and not _local_beam:
         raise _parser.error("at least one of -a, -b, or -l must be given")
 
+    if _a_star:
+        _alg = "a_star"
+    elif _bounded_a_star:
+        _alg = "bounded_astar"
+    elif _local_beam:
+        _alg = "local_beam"
+    else:
+        raise _parser.error("at least one of -a, -b, or -l must be given")
+
     # Run the simulations and record simulation results.
     _names = get_file_names(_num_sims, _n, _k, _m, _h_name, _state_type,
                             _bound, _k_limit)
@@ -154,7 +168,7 @@ if __name__ == "__main__":
                                          _state_type, _verbose)
         data_a_star['h_name'] = _h_name
         utils.dump_json_data(_names['a_star'], data_a_star)
-        # utils.plot_results(_names['a_star'], data_a_star)
+        #utils.plot_results(_names['a_star'], data_a_star)
 
     if _verbose and _bounded_a_star:
         print("Bounded A* simulations.")
