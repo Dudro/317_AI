@@ -45,6 +45,7 @@ class World:
     def get_full_map(self):
         """
         Returns the original full map.
+
         :rtype: NetworkX Graph
         """
         return self._full_map
@@ -52,6 +53,7 @@ class World:
     def get_garage(self):
         """
         Returns the vertex index of the garage.
+
         :rtype: int
         """
         return self._G
@@ -59,6 +61,7 @@ class World:
     def get_number_of_cars(self):
         """
         Returns the total number of cars.
+
         :rtype: int
         """
         return self._N
@@ -69,6 +72,7 @@ class World:
         correspond to vertices that are a package source and/or a package
         destination and/or or the garage. The resulting list is cached to speed
         up future invocations.
+
         :rtype: list(int)
         """
         if self._important_vertices is None:
@@ -86,6 +90,7 @@ class World:
     def get_package_source(self, pkg_id):
         """
         Returns the source vertex of the given package.
+
         :param pkg_id: the package
         :type pkg_id: int
         :rtype: int
@@ -96,6 +101,7 @@ class World:
     def get_package_dest(self, pkg_id):
         """
         Returns the destination vertex of the given package.
+
         :param pkg_id: the package
         :type pkg_id: int
         :rtype: int
@@ -129,6 +135,7 @@ class World:
         """
         Returns the edge cost between any two vertices in the reduced map. The
         reduced map is precomputed if needed.
+
         :param location: the source vertex
         :param goal: the destination vertex
         :rtype: float
@@ -140,6 +147,7 @@ class World:
     def get_reduced_map(self):
         """
         Returns the reduced map. The reduced map is precomputed if needed.
+
         :rtype: NetworkX Graph
         """
         if self._reduced_map is None:
@@ -149,6 +157,7 @@ class World:
     def get_shortest_path(self, source, dest):
         """
         Returns the shortest path between any two vertices in the original map.
+
         :param source: the source vertex
         :param dest: the destination vertex
         :rtype: list(int)
@@ -159,6 +168,7 @@ class World:
         """
         Returns the edge cost between the given package's source and
         destination in the reduced map.
+
         :param package: the package
         :type package: int
         :rtype: float

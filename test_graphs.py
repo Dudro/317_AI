@@ -8,6 +8,7 @@ def show_graph(graph, pairs=None, garage=0):
     """
     Draws the given graph using graphs.draw_graph, and then shows the
     Matplotlib plot.
+
     :param graph: the graph to draw
     :type graph: NetworkX graph
     :param pairs: source-destination pairs. Default: None.

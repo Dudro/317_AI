@@ -26,7 +26,8 @@ def test_comb_list(numbers, r):
 
 
 def test_perm_exclude(n, r, exclude=None):
-    print("%d-permutations of" % r, [i for i in range(n)], "excluding", exclude)
+    print("%d-permutations of" % r, [i for i in range(n)], "excluding",
+          exclude)
     for perm in permutations_exclude(n, r, exclude):
         print(perm)
 

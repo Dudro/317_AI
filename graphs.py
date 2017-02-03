@@ -185,11 +185,20 @@ def get_random_graph(k, m, seed=None):
 
 
 def generate_random_package_routes(k, m):
-        pairs = []
-        for _ in range(k):
-            src = random.randint(0, m - 1)
-            dest = src
-            while dest == src:
-                dest = random.randint(0, m - 1)
-            pairs.append((src, dest))
-        return pairs
+    """
+    Returns a randomly generated list of 'k' source-destination pairs (integers
+    between 0 and 'm' - 1). Ensures that the source and destination of any
+    particular package are distinct.
+
+    :param k: the number of packages
+    :param m: the number of locations
+    :rtype: list((int, int))
+    """
+    pairs = []
+    for _ in range(k):
+        src = random.randint(0, m - 1)
+        dest = src
+        while dest == src:
+            dest = random.randint(0, m - 1)
+        pairs.append((src, dest))
+    return pairs

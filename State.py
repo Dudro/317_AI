@@ -36,6 +36,7 @@ class State:
         to reach its current location, and the order in which packages were
         delivered (and which car delivered them) is *not* considered for
         determining state equality.
+
         :param other: another state
         :type other: State
         :rtype: bool
@@ -52,7 +53,8 @@ class State:
 
     def get_world(self):
         """
-        Returns the world state
+        Returns the world state.
+
         :rtype: World
         """
         return self._world
@@ -65,6 +67,7 @@ class State:
         state x, f(x) = g(x) + h(x), where g(x) is the total cost so far from
         the initial state to state x, and h(x) is the heuristic estimating the
         remaining cost still to be incurred between x and a goal state.
+
         :rtype: float
         """
         return self._g
@@ -72,6 +75,7 @@ class State:
     def get_car_locs(self):
         """
         For each car, returns a stack recording the car's path over time.
+
         :rtype: list(list(int))
         """
         return self._car_locs
@@ -79,7 +83,8 @@ class State:
     def get_packages(self):
         """
         Returns a list of booleans showing whether each package has been
-            delivered or not
+        delivered or not.
+
         :rtype: list(bool)
         """
         return self._packages
@@ -87,6 +92,7 @@ class State:
     def get_car_path(self, n):
         """
         Returns a stack recording the n'th car's path over time.
+
         :param n: the index of the car
         :rtype: list(int)
         """
@@ -95,6 +101,7 @@ class State:
     def get_car_loc(self, n):
         """
         Returns the current location of the n'th car.
+
         :param n: the index of the car
         :rtype: int
         """
@@ -103,6 +110,7 @@ class State:
     def get_num_delivered(self):
         """
         Returns the number of packages that have already been delivered.
+
         :rtype: int
         """
         return self._packages.count(True)
@@ -110,6 +118,7 @@ class State:
     def get_num_undelivered(self):
         """
         Returns the number of packages that still need to be delivered.
+
         :rtype: int
         """
         return self._packages.count(False)
@@ -117,6 +126,7 @@ class State:
     def all_packages_delivered(self):
         """
         Returns whether all packages have been delivered or not.
+
         :rtype: bool
         """
         return self.get_num_undelivered() == 0
@@ -126,6 +136,7 @@ class State:
     def zero_h(self):
         """
         The 0 heuristic. That is, h(x) = 0 for all states x.
+
         :rtype: int
         """
         return 0
@@ -133,6 +144,7 @@ class State:
     def undelivered_h(self):
         """
         A heuristic that simply counts the number of undelivered packages.
+
         :rtype: int
         """
         return self.get_num_undelivered()
@@ -142,6 +154,7 @@ class State:
         A heuristic that computes the sum of the distance between each package
         and its destination. This is >0 for all undelivered package, and 0 for
         all delivered packages.
+
         :rtype: float
         """
         sum_of_package_distances = 0
@@ -160,6 +173,7 @@ class State:
         this may give search algorithms more of an incentive to drop off a
         package (since a heuristic value closer to 0 implies that we are closer
         to a goal state).
+
         :rtype: float
         """
         sum_of_package_distances = self.sum_of_package_distance_h()
@@ -182,6 +196,7 @@ def state_transition(state):
     create a successor state wherein the chosen cars have moved to their
     assigned package's source (if needed), and then moved their assigned
     package from its source to its destination.
+
     :param state: the state for which the successors should be found
     :rtype: list(State)
     """
@@ -252,6 +267,7 @@ def is_goal(state):
     """
     Returns whether or not the given state is a goal state. A goal state has
     every package delivered and every car back at the garage.
+
     :param state: the state to check
     :rtype: bool
     """
@@ -265,6 +281,7 @@ def decorating_f(h):
     """
     Returns a function that takes a State, x, and returns f(x) = g(x) + h(x).
     The given parameter should be the function h.
+
     :param h: the heuristic function
     :rtype: State => float
     """
@@ -277,9 +294,10 @@ def decorating_f(h):
 
 def recreate_paths(state):
     """
-    Returns a list of paths, one fdaor each car, that traces the car's path in
+    Returns a list of paths, one for each car, that traces the car's path in
     the original map from the initial state (where each car is in the garage)
     to the given state.
+
     :param state: the state for which to recreate the car paths
     :rtype: list(list(int))
     """
