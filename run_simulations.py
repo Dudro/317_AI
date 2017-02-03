@@ -1,6 +1,5 @@
 from Main import *
 import subprocess
-import argparse
 
 
 def run_sims(verbose, a_star, h_name, vanilla, push):
@@ -166,6 +165,8 @@ def do_run(arg_list, names, file_names, a_star=False, bounded_a_star=True,
 
 
 if __name__ == "__main__":
+    import argparse
+
     # Define command line arguments.
     parser = argparse.ArgumentParser(
         description="Run a large suite of simulations, with the various "
@@ -182,6 +183,8 @@ if __name__ == "__main__":
                         help="heuristic function to use")
     parser.add_argument("--vanilla", action='store_true',
                         help="run simulations with vanilla state transitions")
+    parser.add_argument("--make-plots", action='store_true',
+                        help="make aggregate plots of resulting data")
     parser.add_argument("-p", "--push", type=int, default=0,
                         choices=[0, 1, 2, 3],
                         help="how far to push each parameter")
@@ -190,9 +193,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     files = run_sims(args.verbose, args.a_star, args.heuristic, args.vanilla,
                      args.push)
-    data_list = [{'algorithm': name,
-                  'data': utils.read_json_data(file)} for name, file in files]
-    print(data_list)  # TODO: fix the output plot functions for the new format
+    if args.make_plots:
+        from make_plots import make_plots
 
-    # utils.output_bar_multiple("bar_plots.html", data_list)
-    # utils.output_plot_multiple("plots.html", data_list)
+        make_plots("bar_plots.html", "plots.html", [file for _, file in files])
