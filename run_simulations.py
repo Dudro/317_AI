@@ -192,6 +192,7 @@ if __name__ == "__main__":
                      args.push)
     data_list = [{'algorithm': name,
                   'data': utils.read_json_data(file)} for name, file in files]
-    print(data_list)
-    utils.output_bar_multiple("bar_plots.html", data_list)
-    utils.output_plot_multiple("plots.html", data_list)
+    print(data_list)  # TODO: fix the output plot functions for the new format
+
+    # utils.output_bar_multiple("bar_plots.html", data_list)
+    # utils.output_plot_multiple("plots.html", data_list)
