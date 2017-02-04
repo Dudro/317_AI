@@ -24,8 +24,10 @@ def a_star_simulations(n, k, m, h, num_sims, state_type, verbose):
     :rtype: list(dict)
     """
     from search import a_star_any_graph
-    return _run_simulations(n, k, m, h, num_sims, a_star_any_graph, state_type,
+    data = _run_simulations(n, k, m, h, num_sims, a_star_any_graph, state_type,
                             verbose)
+    data['algorithm'] = 'a_star'
+    return data
 
 
 def bounded_a_star_simulations(n, k, m, h, num_sims, state_type, bound,
@@ -61,8 +63,11 @@ def bounded_a_star_simulations(n, k, m, h, num_sims, state_type, bound,
     :rtype: list(dict)
     """
     from search import bounded_a_star_any_graph
-    return _run_simulations(n, k, m, h, num_sims, bounded_a_star_any_graph,
+    data = _run_simulations(n, k, m, h, num_sims, bounded_a_star_any_graph,
                             state_type, verbose, bound)
+    data['algorithm'] = 'bounded_a_star'
+    data['bound'] = bound
+    return data
 
 
 def local_beam_simulations(n, k, m, h, num_sims, state_type, k_limit, verbose):
@@ -94,8 +99,11 @@ def local_beam_simulations(n, k, m, h, num_sims, state_type, k_limit, verbose):
     :rtype: list(dict)
     """
     from search import local_beam_any_graph
-    return _run_simulations(n, k, m, h, num_sims, local_beam_any_graph,
+    data = _run_simulations(n, k, m, h, num_sims, local_beam_any_graph,
                             state_type, verbose, k_limit)
+    data['algorithm'] = 'local_beam'
+    data['k_limit'] = k_limit
+    return data
 
 
 def _run_simulations(n, k, m, h, num_sims, search_alg, state_type, verbose,
@@ -130,7 +138,6 @@ def _run_simulations(n, k, m, h, num_sims, search_alg, state_type, verbose,
     :rtype: list(dict)
     """
     from graphs import get_random_graph
-    import search
     import utils
 
     data = []  # List of dictionaries (eventually) for data collection.
@@ -141,22 +148,11 @@ def _run_simulations(n, k, m, h, num_sims, search_alg, state_type, verbose,
             print("Starting problem", i, flush=True)
         data.append(search_alg(n, k, m, random_graph, pairs, state_type, h,
                                *args, **kwargs))
-    
-    if search_alg == search.a_star_any_graph:
-        alg = "a_star"
-    elif search_alg == search.bounded_a_star_any_graph:
-        alg = "bounded_a_star"
-    elif search_alg == search.local_beam_any_graph:
-        alg = "local_beam"
-    else:
-        alg = "a_star"
-
     return {
         'num_sims': num_sims,
         'n': n,
         'k': k,
         'm': m,
-        'algorithm': alg,
         'state_type': state_type,
         'data': data
     }
