@@ -30,10 +30,10 @@ def run_sims(verbose, a_star, h_name, vanilla, push):
         bound_cap_set = [1]
         k_limit_set = [defaults['k_limit']]
     elif push == 1:
-        num_sims = 10 
+        num_sims = str(10) 
         n_set = range(1, 2)
-        k_set = range(1, 2)
-        m_set = range(10, 100, 10)
+        k_set = range(1, 11)
+        m_set = range(10,11)
         bound_percentage_set = [0.01, 0.02, 0.03, 0.04, 0.05, 0.07, 0.09,
                                 0.15, 0.25, 0.50]
         bound_cap_set = range(1, 20, 3)
@@ -68,28 +68,32 @@ def run_sims(verbose, a_star, h_name, vanilla, push):
     file_names = []
 
     # Vary the number of cars.
+    """
     for n in n_set:
         arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla)
         arg_list.extend(["-n", str(n)])
-        if n > defaults['k']:
-            arg_list.extend(["-k", str(n+1)])
+        arg_list.extend(["-k", str(2)])
+        arg_list.extend(["-m", str(20)])
         do_run(arg_list, get_file_names(num_sims=num_sims, n=n, h_name=h_name),
                file_names, a_star=a_star)
-
+    
     # Vary the number of packages.
+    """
     for k in k_set:
         arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla)
+        arg_list.extend(["-n", str(1)])
         arg_list.extend(["-k", str(k)])
+        arg_list.extend(["-m", str(20)])
         do_run(arg_list, get_file_names(num_sims=num_sims, k=k, h_name=h_name),
                file_names, a_star=a_star)
-
     # Vary the number of locations.
+    """
     for m in m_set:
         arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla)
         arg_list.extend(["-m", str(m)])
         do_run(arg_list, get_file_names(num_sims=num_sims, m=m, h_name=h_name),
                file_names, a_star=a_star)
-
+    """
     max_n = str(max(n_set))
     max_k = str(max(k_set))
     max_m = str(max(m_set))

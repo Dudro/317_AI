@@ -40,6 +40,7 @@ def get_plot(averages, y_axis):
     for k, v in sorted(averages.items()):
         plot_data['x'].append(k)
         plot_data['y'].append(v[y_axis])
+        plot_data['name']: str(v[y_axis])
 
     return go.Scatter(plot_data)
 
