@@ -42,6 +42,8 @@ class World:
         self._important_vertices = None
         self._G = g
 
+        self._full_map_cheapest_edges = None
+
     def get_full_map(self):
         """
         Returns the original full map.
@@ -49,6 +51,22 @@ class World:
         :rtype: NetworkX Graph
         """
         return self._full_map
+
+    def process_cheapest_edges(self):
+        self._full_map_cheapest_edges = []
+        full_map = self.get_full_map()
+        for i in range(self._M):
+            adjacency = full_map[i]
+            cheapest = 100000000
+            for key in adjacency.keys():
+                if adjacency[key] < cheapest:
+                    cheapest = adjacency[key]
+            self._full_map_cheapest_edges.append(cheapest)
+
+    def get_cheapest_edge(self, node):
+        if node >= self._M:
+            return None
+        return self._full_map_cheapest_edges[node]
 
     def get_garage(self):
         """

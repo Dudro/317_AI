@@ -374,10 +374,23 @@ class VanillaState(State):
             return world.get_package_source(k)
 
     def sum_of_estimated_distance(self):
-        return 0
+        cost = 0
+        packs = self.get_packages()
+        world = self.get_world()
+        for i in range(len(packs)):
+            if not packs[i]:
+                loc = self.get_package_loc(i)
+                cost += world.get_cheapest_edge(loc)
+                #Is this package more than one edge away from its destination?
+                destination = world.get_package_dest(i)
+                if not (loc in world.get_full_map()[destination].keys()):
+                    cost += world.get_cheapest_edge(destination)
+        return cost
 
     def sum_of_estimated_distance_scaled(self):
-        return 0
+        base_cost = self.sum_of_estimated_distance()
+        scalar = 1 / self.get_num_undelivered() + 1
+        return base_cost * scalar
 
 
 def recursive_neighbour_generator(number_of_cars, i, car_locs, world,
