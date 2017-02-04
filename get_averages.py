@@ -32,7 +32,6 @@ def get_averages(data_list, n):
 
 
 def get_plot(averages, y_axis):
-    from plotly import offline as py
     from plotly import graph_objs as go
    
     plot_data = {}
@@ -66,37 +65,56 @@ def make_avg_plots(file_names, x_axis, y_axis):
 
 def make_all_the_plots(all_files):
     """
+    Change and add dictionaries and their regex expressions to add
+    files to average plots.
     """
+    from plotly import offline as py
     import re
+    
     plots = []
-    # This is for varying m + preproc
-    # get all the files with varying  and static everyting else
-    # pass them to plots blah blah blah and 
-    # along with y-axis (pre_proc)
-    p = re.compile('sims10\.n2\.k5\.m[0-9]+\..+\.json')
-    pre_proc_v_m = [ x for x in all_files if p.search(x) is not None ]
-    plots.append(make_avg_plots(pre_proc_v_m, 'm', 'pre_proc'))
-    """
-    p = re.compile('sims')
-    time_v_n = [ x for x in all_files if p.search(x) is not None ]
-    print(time_v_n)
-    plots.append(make_avg_plots(time_v_n, 'n', 'time'))
+    plot_types = []
+    m_v_pre_proc = {
+            'x':    'm',
+            'y':    'pre_proc',
+            'reg':  'sims10\.n2\.k5\.m[0-9]+\.sum\.State\.a_star\.json'
+            }
+    plot_types.append(m_v_pre_proc)
+    n_v_time = {
+            'x':    'n',
+            'y':    'time',
+            'reg':  'sims10\.n([0-9]+)\.k\1\.m10\.sum\.State\.a_star\.json'
+            }
+    plot_types.append(n_v_time)
+    k_v_time = {
+            'x':    'k',
+            'y':    'time',
+            'reg':  'sims10\.n2\.k[0-9]+\.m30\.sum\.State\.a_star\.json'
+            }
+    plot_types.append(k_v_time)
+    n_v_count = {
+            'x':    'n',
+            'y':    'count',
+            'reg':  'sims10\.n[0-9]+\.k2\.m10\.sum\.State\.a_star\.json'
+            }
+    plot_types.append(n_v_count)
+    k_v_count = {
+            'x':    'k',
+            'y':    'count',
+            'reg':  'sims10\.n1\.k[0-9]+\.m10\.sum\.State\.a_star\.json'
+            }
+    plot_types.append(k_v_count)
 
-    p = re.compile('50')
-    time_v_k = [ x for x in all_files if p.search(x) is not None ]
-    print(time_v_k)
-    plots.append(make_avg_plots(time_v_k, 'k', 'time'))
-
-    p = re.compile('50')
-    nodes_v_n = [ x for x in all_files if p.search(x) is not None ]
-    print(time_v_k)
-    plots.append(make_avg_plots(time_v_k, 'n', 'count'))
-
-    p = re.compile('50')
-    nodes_v_k = [ x for x in all_files if p.search(x) is not None ]
-    print(time_v_k)
-    plots.append(make_avg_plots(time_v_k, 'k', 'count'))
-    """
+    for params in plot_types:
+        # Here, match simulation of constant n, k, and varying m 
+        p = re.compile(params['reg'])
+        matching_files = [ x for x in all_files if p.search(x) is not None ]
+        print(matching_files)
+        if matching_files:
+            plots.append(
+                    make_avg_plots(matching_files, params['x'], params['y']))
+    
+    py.plot(plots)
+    
 
 if __name__ == "__main__":
     import sys

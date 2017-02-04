@@ -1,0 +1,81 @@
+{
+    "state_type": "State",
+    "data": [
+        {
+            "node_count": 674,
+            "simulation_time": "0.1847",
+            "pre_processing_time": "0.0031",
+            "algorithm": "a_star",
+            "cost_sum": 9700
+        },
+        {
+            "node_count": 870,
+            "simulation_time": "0.1854",
+            "pre_processing_time": "0.0029",
+            "algorithm": "a_star",
+            "cost_sum": 9684
+        },
+        {
+            "node_count": 7248,
+            "simulation_time": "0.9676",
+            "pre_processing_time": "0.0031",
+            "algorithm": "a_star",
+            "cost_sum": 8456
+        },
+        {
+            "node_count": 1674,
+            "simulation_time": "0.3486",
+            "pre_processing_time": "0.0030",
+            "algorithm": "a_star",
+            "cost_sum": 15982
+        },
+        {
+            "node_count": 4978,
+            "simulation_time": "0.7306",
+            "pre_processing_time": "0.0032",
+            "algorithm": "a_star",
+            "cost_sum": 10762
+        },
+        {
+            "node_count": 1574,
+            "simulation_time": "0.3274",
+            "pre_processing_time": "0.0029",
+            "algorithm": "a_star",
+            "cost_sum": 13212
+        },
+        {
+            "node_count": 1920,
+            "simulation_time": "0.4070",
+            "pre_processing_time": "0.0030",
+            "algorithm": "a_star",
+            "cost_sum": 8447
+        },
+        {
+            "node_count": 2104,
+            "simulation_time": "0.3867",
+            "pre_processing_time": "0.0030",
+            "algorithm": "a_star",
+            "cost_sum": 4450
+        },
+        {
+            "node_count": 3568,
+            "simulation_time": "0.6117",
+            "pre_processing_time": "0.0039",
+            "algorithm": "a_star",
+            "cost_sum": 17085
+        },
+        {
+            "node_count": 492,
+            "simulation_time": "0.1517",
+            "pre_processing_time": "0.0032",
+            "algorithm": "a_star",
+            "cost_sum": 9504
+        }
+    ],
+    "algorithm": "a_star",
+    "m": 20,
+    "num_sims": 10,
+    "k": 5,
+    "h_name": "sum",
+    "n": 2
+}

@@ -1,0 +1,81 @@
+{
+    "data": [
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0006",
+            "cost_sum": 1558,
+            "algorithm": "a_star",
+            "simulation_time": "0.0026"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0006",
+            "cost_sum": 1972,
+            "algorithm": "a_star",
+            "simulation_time": "0.0024"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0006",
+            "cost_sum": 3252,
+            "algorithm": "a_star",
+            "simulation_time": "0.0024"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0006",
+            "cost_sum": 6830,
+            "algorithm": "a_star",
+            "simulation_time": "0.0024"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0005",
+            "cost_sum": 6176,
+            "algorithm": "a_star",
+            "simulation_time": "0.0024"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0005",
+            "cost_sum": 3512,
+            "algorithm": "a_star",
+            "simulation_time": "0.0024"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0005",
+            "cost_sum": 3976,
+            "algorithm": "a_star",
+            "simulation_time": "0.0024"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0006",
+            "cost_sum": 1848,
+            "algorithm": "a_star",
+            "simulation_time": "0.0030"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0005",
+            "cost_sum": 2986,
+            "algorithm": "a_star",
+            "simulation_time": "0.0024"
+        },
+        {
+            "node_count": 9,
+            "pre_processing_time": "0.0006",
+            "cost_sum": 2830,
+            "algorithm": "a_star",
+            "simulation_time": "0.0036"
+        }
+    ],
+    "state_type": "State",
+    "algorithm": "a_star",
+    "h_name": "sum",
+    "n": 7,
+    "num_sims": 10,
+    "k": 1,
+    "m": 10
+}
