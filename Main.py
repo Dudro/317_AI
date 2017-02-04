@@ -5,7 +5,7 @@ import argparse
 
 # Default values for command line arguments.
 defaults = {
-    'num_sims': 25,
+    'num_sims': 100,
     'n': 2,
     'k': 5,
     'm': 30,

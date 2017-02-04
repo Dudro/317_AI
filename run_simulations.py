@@ -30,10 +30,10 @@ def run_sims(verbose, a_star, h_name, vanilla, push):
         bound_cap_set = [1]
         k_limit_set = [defaults['k_limit']]
     elif push == 1:
-        num_sims = str(defaults['num_sims'])
-        n_set = range(1, 4)
-        k_set = range(1, 11)
-        m_set = range(30, 301, 30)
+        num_sims = 10 
+        n_set = range(1, 2)
+        k_set = range(1, 2)
+        m_set = range(10, 100, 10)
         bound_percentage_set = [0.01, 0.02, 0.03, 0.04, 0.05, 0.07, 0.09,
                                 0.15, 0.25, 0.50]
         bound_cap_set = range(1, 20, 3)
@@ -129,7 +129,7 @@ def run_sims(verbose, a_star, h_name, vanilla, push):
 
 
 def build_arg_list(verbose, a_star, num_sims, h_name, vanilla,
-                   bounded_a_star=True, local_beam=True):
+                   bounded_a_star=False, local_beam=False):
     """
     Builds a list of arguments to give to subprocess.run() to run Main.py. The
     given parameters simply cause their command line equivalent to be added to
@@ -152,8 +152,8 @@ def build_arg_list(verbose, a_star, num_sims, h_name, vanilla,
     return arg_list
 
 
-def do_run(arg_list, names, file_names, a_star=False, bounded_a_star=True,
-           local_beam=True):
+def do_run(arg_list, names, file_names, a_star=True, bounded_a_star=False,
+           local_beam=False):
     """
     Runs arg_list as a subprocess, and checks the return code. Raises an error
     if it is non-zero. Otherwise, adds the correct file names to the given
@@ -161,13 +161,16 @@ def do_run(arg_list, names, file_names, a_star=False, bounded_a_star=True,
     'local_beam'.
     """
     subprocess.run(arg_list).check_returncode()
+    
     a_star_tuple = ('a_star', names['a_star'] + ".json")
     if a_star and a_star_tuple not in file_names:
         file_names.append(a_star_tuple)
+    
     bounded_a_star_tuple = ('bounded_a_star',
                             names['bounded_a_star'] + ".json")
     if bounded_a_star and bounded_a_star_tuple not in file_names:
         file_names.append(bounded_a_star_tuple)
+    
     local_beam_tuple = ('local_beam', names['local_beam'] + ".json")
     if local_beam and local_beam_tuple not in file_names:
         file_names.append(local_beam_tuple)
@@ -202,6 +205,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     files = run_sims(args.verbose, args.a_star, args.heuristic, args.vanilla,
                      args.push)
+    
     if args.make_plots:
         from make_plots import make_plots
 
