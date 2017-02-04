@@ -53,22 +53,34 @@ class World:
         return self._full_map
 
     def process_cheapest_edges(self):
-        self._full_map_cheapest_edges = []
-        full_map = self.get_full_map()
-        for i in range(self._M):
-            adjacency = full_map[i]
-            cheapest = 100000000
-            for key in adjacency.keys():
-                if adjacency[key] < cheapest:
-                    cheapest = adjacency[key]
-            self._full_map_cheapest_edges.append(cheapest)
+        """
+        Processes the full map to find the cost of the cheapest edge incident
+        to every vertex/location in the full map.
+        """
+        if self._full_map_cheapest_edges is None:
+            self._full_map_cheapest_edges = []
+            full_map = self.get_full_map()
+            for i in range(self._M):
+                adjacency = full_map[i]
+                cheapest = 100000000
+                for key in adjacency.keys():
+                    if adjacency[key]['weight'] < cheapest:
+                        cheapest = adjacency[key]['weight']
+                self._full_map_cheapest_edges.append(cheapest)
 
-    def get_cheapest_edge(self, node):
-        if node >= self._M:
+    def get_cheapest_edge(self, loc):
+        """
+        Returns the cost of the cheapest edge incident to 'loc' in the full
+        map.
+
+        :param loc: the index of a vertex/location in the full map
+        :rtype: float
+        """
+        if loc >= self._M:
             return None
         if self._full_map_cheapest_edges is None:
             self.process_cheapest_edges()
-        return self._full_map_cheapest_edges[node]
+        return self._full_map_cheapest_edges[loc]
 
     def get_garage(self):
         """
