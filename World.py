@@ -66,6 +66,8 @@ class World:
     def get_cheapest_edge(self, node):
         if node >= self._M:
             return None
+        if self._full_map_cheapest_edges is None:
+            self.process_cheapest_edges()
         return self._full_map_cheapest_edges[node]
 
     def get_garage(self):
