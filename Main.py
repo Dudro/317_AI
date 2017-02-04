@@ -1,7 +1,27 @@
 from simulation import *
-from State import State
+from State import State, VanillaState
 import utils
 import argparse
+
+# All available heuristics.
+heuristics = {
+    'zero': {
+        'State': State.zero_h,
+        'VanillaState': State.zero_h
+    },
+    'undelivered': {
+        'State': State.undelivered_h,
+        'VanillaState': State.undelivered_h
+    },
+    'scaled': {
+        'State': State.sum_of_package_cost_scaled_h,
+        'VanillaState': VanillaState.sum_of_estimated_cost_scaled_h
+    },
+    'sum': {
+        'State': State.sum_of_package_cost_h,
+        'VanillaState': VanillaState.sum_of_estimated_cost_h
+    }
+}
 
 # Default values for command line arguments.
 defaults = {
@@ -9,19 +29,11 @@ defaults = {
     'n': 2,
     'k': 5,
     'm': 30,
-    'h': State.sum_of_package_cost_h,
-    'h_name': "sum",
+    'h': heuristics['sum']['State'],
+    'h_name': 'sum',
     'state_type': 'State',
     'bound': 1,
     'k_limit': 20
-}
-
-# All available heuristics.
-heuristics = {
-    "zero": State.zero_h,
-    "undelivered": State.undelivered_h,
-    "scaled": State.sum_of_package_cost_scaled_h,
-    "sum": State.sum_of_package_cost_h
 }
 
 
@@ -111,7 +123,7 @@ if __name__ == "__main__":
                          default=defaults['m'],
                          help="number of locations in the input map")
     _parser.add_argument("--heuristic", default=defaults['h_name'],
-                         choices=["zero", "undelivered", "scaled", "sum"],
+                         choices=['zero', 'undelivered', 'scaled', 'sum'],
                          help="heuristic function to use")
     _parser.add_argument("--vanilla", action='store_true',
                          help="run simulations with vanilla state transitions")
@@ -140,8 +152,8 @@ if __name__ == "__main__":
     _k = _args.packages
     _m = _args.locations
     _h_name = _args.heuristic
-    _h = heuristics[_h_name]
     _state_type = 'VanillaState' if _args.vanilla else 'State'
+    _h = heuristics[_h_name][_state_type]
     _bound = _args.bound
     _k_limit = _args.k_limit
 

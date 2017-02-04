@@ -72,7 +72,7 @@ def run_sims(verbose, a_star, h_name, vanilla, push):
         arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla)
         arg_list.extend(["-n", str(n)])
         if n > defaults['k']:
-            arg_list.extend(["-k", str(n+1)])
+            arg_list.extend(["-k", str(n + 1)])
         do_run(arg_list, get_file_names(num_sims=num_sims, n=n, h_name=h_name),
                file_names, a_star=a_star)
 
@@ -188,7 +188,7 @@ if __name__ == "__main__":
                              "the default Bounded A* Search and Local Beam "
                              "Search")
     parser.add_argument("--heuristic", default=defaults['h_name'],
-                        choices=["zero", "undelivered", "scaled", "sum"],
+                        choices=['zero', 'undelivered', 'scaled', 'sum'],
                         help="heuristic function to use")
     parser.add_argument("--vanilla", action='store_true',
                         help="run simulations with vanilla state transitions")
