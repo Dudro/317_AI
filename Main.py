@@ -9,7 +9,7 @@ defaults = {
     'n': 2,
     'k': 5,
     'm': 30,
-    'h': State.sum_of_package_distance_h,
+    'h': State.sum_of_package_cost_h,
     'h_name': "sum",
     'state_type': 'State',
     'bound': 1,
@@ -20,8 +20,8 @@ defaults = {
 heuristics = {
     "zero": State.zero_h,
     "undelivered": State.undelivered_h,
-    "scaled": State.sum_of_package_distance_scaled_h,
-    "sum": State.sum_of_package_distance_h
+    "scaled": State.sum_of_package_cost_scaled_h,
+    "sum": State.sum_of_package_cost_h
 }
 
 

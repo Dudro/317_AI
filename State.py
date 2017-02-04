@@ -149,26 +149,26 @@ class State:
         """
         return self.get_num_undelivered()
 
-    def sum_of_package_distance_h(self):
+    def sum_of_package_cost_h(self):
         """
-        A heuristic that computes the sum of the distance between each package
-        and its destination. This is >0 for all undelivered package, and 0 for
-        all delivered packages.
+        A heuristic that computes the sum of the cost between each package and
+        its destination. This is >0 for all undelivered package, and 0 for all
+        delivered packages.
 
         :rtype: float
         """
-        sum_of_package_distances = 0
+        sum_of_package_costs = 0
         for i, pack in enumerate(self._packages):
             if not pack:  # if package is not yet delivered
-                sum_of_package_distances += self._world.get_package_cost(i)
-        return sum_of_package_distances
+                sum_of_package_costs += self._world.get_package_cost(i)
+        return sum_of_package_costs
 
-    def sum_of_package_distance_scaled_h(self):
+    def sum_of_package_cost_scaled_h(self):
         """
-        A heuristic that computes the sum of the distance between each package
-        and its destination, and then scales down the heuristic by 1 - k/K,
-        where k is the number of packages delivered and K is the total number
-        of packages. The idea is that, as more packages are delivered, the
+        A heuristic that computes the sum of the cost between each package and
+        its destination, and then scales down the heuristic by 1 - k/K, where
+        k is the number of packages delivered and K is the total number of
+        packages. The idea is that, as more packages are delivered, the
         heuristic drops to 0 faster than simply by the computing the sum, and
         this may give search algorithms more of an incentive to drop off a
         package (since a heuristic value closer to 0 implies that we are closer
@@ -176,11 +176,11 @@ class State:
 
         :rtype: float
         """
-        sum_of_package_distances = self.sum_of_package_distance_h()
+        sum_of_package_costs = self.sum_of_package_cost_h()
         num_delivered = self.get_num_delivered()
         reduction_val = 1.0 / float(len(self._packages))
         scalar = 1 - (num_delivered * reduction_val)
-        return scalar * sum_of_package_distances
+        return scalar * sum_of_package_costs
 
 
 def state_transition(state):
@@ -322,73 +322,124 @@ def recreate_paths(state):
 
 
 class VanillaState(State):
+    """
+        A VanillaState simply represents a state in the vanilla state space.
+        """
+
     def __init__(self, world, car_locs, packages, cost_so_far, held):
+        """
+        :param world: see State constructor
+        :param car_locs: see State constructor
+        :param packages: see State constructor
+        :param cost_so_far: see State constructor
+        :param held: a list of indices of the package each car is holding, or
+            -1 for any car that is not holding a package
+        :type held: list(int)
+        """
         super(VanillaState, self).__init__(world, car_locs, packages,
                                            cost_so_far)
         self._held = held
 
     def __eq__(self, other):
-        cars = self.get_car_locs()
+        """
+        Two states are considered equal if they have the same number of cars,
+        if the *current* location of each car is the same in both states, if
+        the same cars are holding packages, if the same packages are being
+        held, and if the same packages have been delivered. The path each car
+        has taken to reach its current location, and the order in which packages
+        were delivered (and which car delivered them) is *not* considered for
+        determining state equality.
+
+        :param other: another state
+        :type other: VanillaState
+        :rtype: bool
+        """
         other_cars = other.get_car_locs()
-        for i in range(len(cars)):
-            if cars[i][len(cars[i]) - 1] != \
-                    other_cars[i][len(other_cars[i]) - 1]:
+        for i, car in enumerate(self._car_locs):
+            if car[len(car) - 1] != other_cars[i][len(other_cars[i]) - 1]:
                 return False
-        packs = self.get_packages()
         other_packs = other.get_packages()
-        for i in range(len(packs)):
-            if packs[i] != other_packs[i]:
+        for i, pack in enumerate(self._packages):
+            if pack != other_packs[i]:
                 return False
-        held = self.get_held()
         other_held = other.get_held()
-        for i in range(len(held)):
-            if held[i] != other_held[i]:
+        for i, held in enumerate(self._held):
+            if held != other_held[i]:
                 return False
         return True
 
     def get_cars_in_garage(self):
-        results = []
-        garage = self.get_world().get_garage()
-        for i in range(len(self.get_car_locs())):
-            if self.get_car_loc(i) == garage:
-                results.append(i)
-        return results
+        """
+        Returns a list of car indices for the cars that are in the garage.
 
-        # held: array of indices of the package each car is holding, if any
+        :rtype: list(int)
+        """
+        return [i for i, car in enumerate(self._car_locs) if car[len(car) - 1]
+                == self._world.get_garage()]
 
     def get_held(self):
+        """
+        Returns a list of indices of the package each car is holding, or -1
+        for any car that is not holding a package.
+
+        :rtype: list(int)
+        """
         return self._held
 
     def get_package_loc(self, k):
-        packs = self.get_packages()
-        world = self.get_world()
-        if k > len(packs):
-            return None
-        if packs[k]:
+        """
+        Returns the current location of package 'k'.
+
+        :param k: the index of the package
+        :rtype: int
+        """
+        world = self._world
+        if self._packages[k]:  # If package k is delivered.
             return world.get_package_dest(k)
         else:
-            held = self.get_held()
-            for i in range(len(held)):
-                if held[i] == k:
-                    return self.get_car_loc(i)
-            return world.get_package_source(k)
+            for i, held in enumerate(self._held):
+                if held == k:  # If car i is holding package k.
+                    return self.get_car_loc(i)  # Return car i's location.
+            return world.get_package_source(k)  # Since package k is not held.
 
-    def sum_of_estimated_distance(self):
+    def sum_of_estimated_cost_h(self):
+        """
+        A heuristic that computes the sum of the estimated cost between each
+        package and its destination. This is >0 for all undelivered package,
+        and 0 for all delivered packages. For undelivered packages, in the
+        worst case, the package needs to leave its current location by the
+        cheapest outgoing edge. Also, if the package is not adjacent to its
+        destination, it needs to enter its destination by the cheapest incoming
+        edge to its destination.
+
+        :rtype: float
+        """
         cost = 0
-        packs = self.get_packages()
-        world = self.get_world()
-        for i in range(len(packs)):
-            if not packs[i]:
+        world = self._world
+        for i, pack in enumerate(self._packages):
+            if not pack:  # If package i is not delivered.
                 loc = self.get_package_loc(i)
                 cost += world.get_cheapest_edge(loc)
-                #Is this package more than one edge away from its destination?
+                # Is this package more than one edge away from its destination?
                 destination = world.get_package_dest(i)
                 if not (loc in world.get_full_map()[destination].keys()):
                     cost += world.get_cheapest_edge(destination)
         return cost
 
-    def sum_of_estimated_distance_scaled(self):
-        base_cost = self.sum_of_estimated_distance()
+    def sum_of_estimated_cost_scaled_h(self):
+        """
+        A heuristic that computes the sum of the estimated cost between each
+        package and its destination, and then scales down the heuristic by 1/k,
+        where k is the number of undelivered packages. The idea is that, as
+        more packages are delivered, the heuristic drops to 0 faster than
+        simply by the computing the sum, and this may give search algorithms
+        more of an incentive to drop off a package (since a heuristic value
+        closer to 0 implies that we are closer to a goal state).
+
+        :rtype: float
+        """
+        base_cost = self.sum_of_estimated_cost_h()
+        # TODO: num UNdelivered or num delivered? also, '+ 1' in denominator?
         scalar = 1 / self.get_num_undelivered() + 1
         return base_cost * scalar
 
@@ -400,10 +451,10 @@ def recursive_neighbour_generator(number_of_cars, i, car_locs, world,
     if i == number_of_cars:
         yield []
     elif i in ignore:
-        nextCar = recursive_neighbour_generator(number_of_cars, i + 1,
-                                                car_locs, world)
+        next_car = recursive_neighbour_generator(number_of_cars, i + 1,
+                                                 car_locs, world)
         while True:
-            result = next(nextCar)
+            result = next(next_car)
             if not result:  # If result is empty.
                 yield [car_locs[i][len(car_locs[i]) - 1]]
                 break
@@ -413,12 +464,12 @@ def recursive_neighbour_generator(number_of_cars, i, car_locs, world,
             world.get_full_map()[car_locs[i][len(car_locs[i]) - 1]])
         while len(adjacency) != 0:
             next_neighbour = adjacency.popitem()
-            nextCar = recursive_neighbour_generator(number_of_cars, i + 1,
-                                                   car_locs, world)
+            next_car = recursive_neighbour_generator(number_of_cars, i + 1,
+                                                     car_locs, world)
             while True:
 
-                result = next(nextCar)
-                if not result: # If result is empty.
+                result = next(next_car)
+                if not result:  # If result is empty.
                     yield [next_neighbour[0]]
                     break
                 else:
@@ -430,7 +481,7 @@ def state_transition_vanilla(state):
     successors = []
     world = state.get_world()
     number_of_cars = world.get_number_of_cars()
-    #print("INITIAL HELD: " + str(state.get_held()))
+    # print("INITIAL HELD: " + str(state.get_held()))
     if state.all_packages_delivered():
         for combo in recursive_neighbour_generator(
                 number_of_cars, 0, state.get_car_locs(), world,
@@ -445,29 +496,31 @@ def state_transition_vanilla(state):
                         start = state.get_car_loc(i)
                         end = combo[i]
 
-                        for edge in list(world.get_full_map().edges(data='weight',
-                                                                    default=1)):
+                        for edge in list(
+                                world.get_full_map().edges(data='weight',
+                                                           default=1)):
                             if edge[0] == start and edge[1] == end:
                                 new_g += edge[2]
-                                #print("Added to g " + str(edge[2]) + ", total: " + str(edge[2] + state.get_g()))
+                                # print("Added to g " + str(edge[2]) + ", total: " + str(edge[2] + state.get_g()))
                                 break
                         new_car_locs[i].append(combo[i])
 
-                new_state = VanillaState(world, new_car_locs, state.get_packages(),
+                new_state = VanillaState(world, new_car_locs,
+                                         state.get_packages(),
                                          new_g, state.get_held())
-                if (new_state != state):
+                if new_state != state:
                     successors.append(new_state)
 
         return successors
     current_packages = state.get_packages()
     for i in range(1, number_of_cars + 1):
-        #print("Trying all combinations with all but", i, "cars moving.")
+        # print("Trying all combinations with all but", i, "cars moving.")
         for cars in combinations(number_of_cars, i):
-            #print("Ignore cars: " + str(cars))
+            # print("Ignore cars: " + str(cars))
             for combo in recursive_neighbour_generator(number_of_cars, 0,
                                                        state.get_car_locs(),
                                                        world, ignore=cars):
-                #print("Some Destinations: " + str(combo))
+                # print("Some Destinations: " + str(combo))
                 if combo and len(combo) == number_of_cars:
                     new_car_locs = [[world.get_garage()]] * number_of_cars
                     new_g = state.get_g()
@@ -480,11 +533,12 @@ def state_transition_vanilla(state):
                         start = state.get_car_loc(j)
                         end = combo[j]
                         # calculate g for car movement in this step
-                        for edge in list(world.get_full_map().edges(data='weight',
-                                                                    default=1)):
+                        for edge in list(
+                                world.get_full_map().edges(data='weight',
+                                                           default=1)):
                             if edge[0] == start and edge[1] == end:
                                 new_g += edge[2]
-                                #print("Added to g " + str(edge[2]) + ", total: " + str(edge[2] + state.get_g()))
+                                # print("Added to g " + str(edge[2]) + ", total: " + str(edge[2] + state.get_g()))
                                 break
                         new_car_locs[j].append(combo[j])
                         # detect if we dropped off a package after moving
@@ -496,31 +550,31 @@ def state_transition_vanilla(state):
                     # make permutations of picking up packages
                     impossible_pickups = [False] * len(new_packages)
                     possible_count = len(new_packages) + 1
-                    #print("possible: " + str(possible_count) + ", new_packages: " + str(new_packages))
+                    # print("possible: " + str(possible_count) + ", new_packages: " + str(new_packages))
                     for k in range(len(new_packages)):
                         if not new_packages[k]:
-                            #print("" + str(world.get_package_source(k)) + ", " + str(combo))
+                            # print("" + str(world.get_package_source(k)) + ", " + str(combo))
                             if not (world.get_package_source(k) in combo):
                                 impossible_pickups[k] = True
                                 possible_count -= 1
                         else:
                             impossible_pickups[k] = True
                             possible_count -= 1
-                    # impossible_pickups now contains all the packages to exclude
-                    # from the permutation
+                    # Impossible_pickups now contains all the packages to
+                    # exclude from the permutation.
 
                     new_state = VanillaState(world, new_car_locs,
                                              new_packages, new_g, new_held)
 
-                    if (new_state != state):
+                    if new_state != state:
                         successors.append(new_state)
-                        #print("Appended state with no packages collected")
+                        # print("Appended state with no packages collected")
                     for j in range(1, possible_count):
                         possible_held = copy.deepcopy(new_held)
                         for packs_perm in permutations_exclude(
                                 possible_count, j, exclude=impossible_pickups):
                             for pack in packs_perm:
-                                #print(packs_perm)
+                                # print(packs_perm)
                                 for n in range(len(new_car_locs)):
                                     if possible_held[n] == -1 and \
                                                     new_car_locs[n][len(
@@ -529,17 +583,18 @@ def state_transition_vanilla(state):
                                                 pack):
                                         possible_held[n] = pack
                                         break
-                                #print("Packs: " + str(possible_held))
+                                # print("Packs: " + str(possible_held))
                                 new_state = VanillaState(world, new_car_locs,
-                                                     new_packages, new_g, possible_held)
+                                                         new_packages, new_g,
+                                                         possible_held)
                                 # print("Generated successor: ", flush=True)
                                 # print(new_state.get_car_locs(), flush=True)
                                 # print(new_state.get_packages(), flush=True)
 
-                                if (new_state != state):
+                                if new_state != state:
                                     successors.append(new_state)
-                                    #print("Appended state with some cars")
-    #             print("Wrap-around!")
+                                    # print("Appended state with some cars")
+    # print("Wrap-around!")
     # print("Now run it with all the cars moving.")
     for combo in recursive_neighbour_generator(number_of_cars, 0,
                                                state.get_car_locs(), world):
@@ -553,7 +608,7 @@ def state_transition_vanilla(state):
             new_held = copy.deepcopy(state.get_held())
 
             for i in range(number_of_cars):
-                #print("All Destinations: " + str(combo))
+                # print("All Destinations: " + str(combo))
                 start = state.get_car_loc(i)
                 end = combo[i]
                 # calculate g for car movement in this step
@@ -561,7 +616,7 @@ def state_transition_vanilla(state):
                         world.get_full_map().edges(data='weight', default=1)):
                     if edge[0] == start and edge[1] == end:
                         new_g += edge[2]
-                        #print("Added to g " + str(edge[2]) + ", total: " + str(edge[2] + state.get_g()))
+                        # print("Added to g " + str(edge[2]) + ", total: " + str(edge[2] + state.get_g()))
                         break
                 new_car_locs[i].append(combo[i])
                 # detect if we dropped off a package after moving
@@ -587,15 +642,15 @@ def state_transition_vanilla(state):
             new_state = VanillaState(world, new_car_locs,
                                      new_packages, new_g, new_held)
 
-            if (new_state != state):
+            if new_state != state:
                 successors.append(new_state)
-                #print("Appended state with no packages collected")
+                # print("Appended state with no packages collected")
             for j in range(1, possible_count):
                 possible_held = copy.deepcopy(new_held)
                 for packs_perm in permutations_exclude(
                         possible_count, j, exclude=impossible_pickups):
                     for pack in packs_perm:
-                        #print(packs_perm)
+                        # print(packs_perm)
                         for n in range(len(new_car_locs)):
                             if possible_held[n] == -1 and \
                                             new_car_locs[n][len(
@@ -603,18 +658,19 @@ def state_transition_vanilla(state):
                                             == world.get_package_source(
                                         pack):
                                 possible_held[n] = pack
-                                #print("PICKED UP!")
+                                # print("PICKED UP!")
                                 break
-                        #print("Packs: " + str(possible_held))
+                        # print("Packs: " + str(possible_held))
 
                         new_state = VanillaState(world, new_car_locs,
-                                                 new_packages, new_g, possible_held)
+                                                 new_packages, new_g,
+                                                 possible_held)
                         # print("Generated successor: ", flush=True)
                         # print(new_state.get_car_locs(), flush=True)
                         # print(new_state.get_packages(), flush=True)
 
-                        if (new_state != state):
+                        if new_state != state:
                             successors.append(new_state)
-    #                         print("Appended state with all cars")
+    # print("Appended state with all cars")
     # print("Successors for this node: " + str(len(successors)))
     return successors
