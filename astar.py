@@ -44,7 +44,8 @@ def a_star_count_nodes(initial_state, is_goal, trans_op, f):
     """
     Like a_star but also counts the number of expanded nodes (number of nodes
     pulled out of the priority queue).
-    :rtype: X, integral
+
+    :rtype: X (a goal state), integral
     """
     return bounded_a_star(initial_state, is_goal, trans_op, f, bound=0)
 
@@ -55,6 +56,7 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
     transition operator, the successor states are sorted according to their
     f-values, and only the best (i.e. lowest valued) 'bound' number of states
     are placed back into the priority queue.
+
     :param initial_state: see a_star
     :param is_goal: see a_star
     :param trans_op: see a_star
@@ -65,6 +67,7 @@ def bounded_a_star(initial_state, is_goal, trans_op, f, bound):
         then interpreted as the maximum number of successors to keep; if 0
         (inclusive) or less, then keep all successors, like regular a_star.
     :type bound: int or float
+    :rtype: X (a goal state), integral
     """
     queue = PriorityQueue()
     counter = 0  # Needed to avoid priority queue trying to compare states.

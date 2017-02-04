@@ -26,25 +26,26 @@ def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
     :param k_limit: the number of successor states that will being considered
         minus 1. Default: 20.
     :type k_limit: int
-    :type: State
+    :rtype: X (a goal state), integral
     """
     return _local_beam_search_helper(0, state, is_goal, trans_op, f, k_limit)
 
 
 def _local_beam_search_helper(counter, state, is_goal, trans_op, f, k_limit):
+    """
+    A helper method that counts the number of nodes expanded, where 'counter'
+    records the number of nodes expanded so far.
+    """
     counter += 1
     if is_goal(state):
         goal_state = state
         yield goal_state, counter
     else:
-        # may add a counter here to count how many nodes that we have explored
-
         potential_temp = PriorityQueue()
         potential = []
         candidate = trans_op(state)
         for mem in candidate:
             mem_cost = f(mem)
-            # question : Should we check for duplicates or not
             if not potential_temp.empty():
                 found = False
                 for tup in potential_temp.queue:
@@ -60,12 +61,6 @@ def _local_beam_search_helper(counter, state, is_goal, trans_op, f, k_limit):
                 potential = potential_temp.queue
             else:
                 potential = potential_temp.queue[0:k_limit]
-        # for mem in candidate:
-        #     if mem.get_g() == min(cost) and potential.empty():
-        #         potential.put(mem)
-        #         state_w_min = mem
-        #     elif mem state_w_min
-
         for mem in potential:
             for sol, exp in _local_beam_search_helper(counter, mem[1], is_goal,
                                                       trans_op, f, k_limit):

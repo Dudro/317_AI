@@ -1,6 +1,5 @@
 from Main import *
 import subprocess
-import argparse
 
 
 def run_sims(verbose, a_star, h_name, vanilla, push):
@@ -18,7 +17,7 @@ def run_sims(verbose, a_star, h_name, vanilla, push):
     :param h_name: the name of the heuristic function to use
     :param vanilla: if True, use the vanilla state transition operator;
         otherwise use the regular state transition operator
-    :param push: how much to push each parameter; choice of [0, 1, 2, 3]
+    :param push: how much to push each parameter; choice of [0, 1, 2, 3, 4]
     :rtype: list((string, string))
     """
     # Set parameter ranges.
@@ -45,18 +44,25 @@ def run_sims(verbose, a_star, h_name, vanilla, push):
         k_set = range(10, 31, 2)
         m_set = range(300, 1001, 100)
         bound_percentage_set = [0.01, 0.02, 0.03, 0.04, 0.05, 0.07, 0.09,
-                                0.15, 0.25]
+                                0.15]
         bound_cap_set = range(1, 14, 3)
         k_limit_set = range(1, 14, 3)
-    else:
+    elif push == 3:
         num_sims = str(2)
         n_set = range(11, 32, 4)
         k_set = range(30, 61, 5)
         m_set = range(1000, 5001, 1000)
-        bound_percentage_set = [0.01, 0.02, 0.03, 0.04, 0.05, 0.07, 0.09,
-                                0.15]
+        bound_percentage_set = [0.01, 0.02, 0.03, 0.04, 0.05, 0.07]
         bound_cap_set = range(1, 8, 3)
         k_limit_set = range(1, 8, 3)
+    else:
+        num_sims = str(1)
+        n_set = [32, 64]
+        k_set = [70, 100]
+        m_set = [10000]
+        bound_percentage_set = [0.0001]
+        bound_cap_set = [1]
+        k_limit_set = [2]
 
     # Run the simulations.
     file_names = []
@@ -65,6 +71,8 @@ def run_sims(verbose, a_star, h_name, vanilla, push):
     for n in n_set:
         arg_list = build_arg_list(verbose, a_star, num_sims, h_name, vanilla)
         arg_list.extend(["-n", str(n)])
+        if n > defaults['k']:
+            arg_list.extend(["-k", str(n+1)])
         do_run(arg_list, get_file_names(num_sims=num_sims, n=n, h_name=h_name),
                file_names, a_star=a_star)
 
@@ -166,6 +174,8 @@ def do_run(arg_list, names, file_names, a_star=False, bounded_a_star=True,
 
 
 if __name__ == "__main__":
+    import argparse
+
     # Define command line arguments.
     parser = argparse.ArgumentParser(
         description="Run a large suite of simulations, with the various "
@@ -182,17 +192,17 @@ if __name__ == "__main__":
                         help="heuristic function to use")
     parser.add_argument("--vanilla", action='store_true',
                         help="run simulations with vanilla state transitions")
+    parser.add_argument("--make-plots", action='store_true',
+                        help="make aggregate plots of resulting data")
     parser.add_argument("-p", "--push", type=int, default=0,
-                        choices=[0, 1, 2, 3],
+                        choices=[0, 1, 2, 3, 4],
                         help="how far to push each parameter")
 
     # Parse command line arguments and run the simulations.
     args = parser.parse_args()
     files = run_sims(args.verbose, args.a_star, args.heuristic, args.vanilla,
                      args.push)
-    data_list = [{'algorithm': name,
-                  'data': utils.read_json_data(file)} for name, file in files]
-    print(data_list)  # TODO: fix the output plot functions for the new format
+    if args.make_plots:
+        from make_plots import make_plots
 
-    # utils.output_bar_multiple("bar_plots.html", data_list)
-    # utils.output_plot_multiple("plots.html", data_list)
+        make_plots("bar_plots.html", "plots.html", [file for _, file in files])

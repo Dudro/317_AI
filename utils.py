@@ -280,7 +280,7 @@ def read_json_data(name):
     Reads data in JSON from the given file, and returns the resulting data.
 
     :param name: the name of the JSON file
-    :rtpye: data
+    :rtype: data
     """
     import json
     with open(name) as data_file:
