@@ -269,6 +269,7 @@ def is_goal(state):
     every package delivered and every car back at the garage.
 
     :param state: the state to check
+    :type state: X, where X is a state type
     :rtype: bool
     """
     for car in range(state.get_world().get_number_of_cars()):
@@ -279,11 +280,12 @@ def is_goal(state):
 
 def decorating_f(h):
     """
-    Returns a function that takes a State, x, and returns f(x) = g(x) + h(x).
-    The given parameter should be the function h.
+    Returns a function that takes a state, x, of type X, and returns
+    f(x) = g(x) + h(x). The given parameter should be the function h.
 
     :param h: the heuristic function
-    :rtype: State => float
+    :type h: X => float, where X is a state type
+    :rtype: X => float, where X is a state type
     """
 
     def true_f(state):
@@ -299,6 +301,7 @@ def recreate_paths(state):
     to the given state.
 
     :param state: the state for which to recreate the car paths
+    :type state: X, where X is a state type
     :rtype: list(list(int))
     """
     all_paths = []
