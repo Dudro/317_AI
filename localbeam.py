@@ -63,7 +63,7 @@ def _greedy_search_helper(counter, state, is_goal, trans_op, f, k_limit):
                 potential = potential_temp.queue[0:k_limit]
         for mem in potential:
             for sol, exp in _greedy_search_helper(counter, mem[1], is_goal,
-                                                      trans_op, f, k_limit):
+                                                  trans_op, f, k_limit):
                 counter = exp
                 yield sol, counter
 
@@ -76,7 +76,6 @@ def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
         if any of them is a goal node, return that
         explore the k_limit nodes, and store them in priority queue
         return if goal is found
-
 
     :param state: a current state
     :type state: X, where X is the argument type of is_goal, trans_op, and f
@@ -98,11 +97,11 @@ def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
     """
     counter = 0
     candidates = PriorityQueue()
-    candidates.put((f(state),counter, state))
+    candidates.put((f(state), counter, state))
     while not candidates.empty():
         if len(candidates.queue) > k_limit:
             temp_candidate = PriorityQueue()
-            for i in range(0,k_limit):
+            for i in range(0, k_limit):
                 temp_candidate.put(candidates.get())
             candidates = temp_candidate
         temp_candidate = PriorityQueue()
@@ -113,5 +112,5 @@ def local_beam_search(state, is_goal, trans_op, f, k_limit=20):
                 counter += 1
                 if is_goal(candidate):
                     yield candidate, counter
-                temp_candidate.put((f(candidate),counter, candidate))
+                temp_candidate.put((f(candidate), counter, candidate))
         candidates = temp_candidate
