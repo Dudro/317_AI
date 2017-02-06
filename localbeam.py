@@ -8,7 +8,7 @@ def greedy_search(state, is_goal, trans_op, f, k_limit=20):
     else
         candidates = trans_op(state)
         choose (k-1) states, x, from candidates with the lowest f(x) values
-        recursively apply local_beam_search on each of those states
+        recursively apply greedy_search on each of those states
 
     :param state: a current state
     :type state: X, where X is the argument type of is_goal, trans_op, and f
