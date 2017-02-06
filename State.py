@@ -442,8 +442,9 @@ class VanillaState(State):
         :rtype: float
         """
         base_cost = self.sum_of_estimated_cost_h()
-        # TODO: num UNdelivered or num delivered? also, '+ 1' in denominator?
-        scalar = 1 / self.get_num_undelivered() + 1
+        num_delivered = self.get_num_delivered()
+        reduction_val = 1.0 / float(len(self._packages))
+        scalar = 1 - (num_delivered * reduction_val)
         return base_cost * scalar
 
 
@@ -531,7 +532,6 @@ def state_transition_vanilla(state):
                         new_car_locs[n] = copy.deepcopy(state.get_car_path(n))
                     new_packages = copy.deepcopy(current_packages)
                     new_held = copy.deepcopy(state.get_held())
-                    car_destinations = []
                     for j in range(number_of_cars):
                         start = state.get_car_loc(j)
                         end = combo[j]
