@@ -51,6 +51,7 @@ def get_triangle_graph():
     """
     Return a small triangle graph with source-destination 
     pairs for testing.
+
     :rtype: Graph, list((int,int))
     """
     triangle_size = 3
@@ -74,6 +75,7 @@ def get_ogg_graph():
     """
     Return ogg (the Original Gangster Graph) with source-destination pairs
     for testing.
+
     :rtype: Graph, list((int,int))
     """
     ogg_size = 9
@@ -104,8 +106,9 @@ def get_ogg_graph():
 
 def get_circle_graph():
     """
-    Return a circular graph of size 10 with 
-    source-destination pairs for testing.
+    Return a circular graph of size 10 with source-destination pairs for
+    testing.
+
     :rtype: Graph, list((int,int))
     """
     circle_size = 10
@@ -150,6 +153,9 @@ def get_circle_graph():
 
 def get_random_graph(k, m, seed=None):
     """
+    Returns a randomly-generated graph with 'm' locations, and a list of 'k'
+    randomly-generated source-destination pairs for packages.
+
     :param k: the number of packages for the problem
     :type k: int
     :param m: the number of vertices in the generated graph
